@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+[x-cloak] {
+    display: none;
+}
+
+html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+[x-cloak] {
+    display: none;
+}
+
+.filepond--root:hover {
+    background-color: rgb(99, 102, 241, 0.2);
+    border-radius: 10px;
+    transition: background-color 0.5s;
+}
+
+.filepond--credits {
+    display: none !important;
+}
+
+.filepond--panel-root {
+    background-color: transparent;
+    border: 2px dashed rgb(99, 102, 241, 0.5);
+    border-radius: 10px;
+}
+
+#nprogress .bar {
+    background: linear-gradient(to right, #a3e635, #6366f1) !important;
+}
+
+#nprogress .spinner {
+    display: none !important;
+}
