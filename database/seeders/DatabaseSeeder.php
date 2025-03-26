@@ -17,24 +17,24 @@ class DatabaseSeeder extends Seeder
     {
         User::create([
             'name' => 'Super Admin',
-            'email' => 'superadmin@preorder.hopexito.com',
-            'password' => bcrypt('meorkacak'),
+            'email' => 'superadmin@gmail.com',
+            'password' => bcrypt('pass'),
             'role_id' => 0,
             'email_verified_at' => now(),
         ]);
 
         User::create([
             'name' => 'Admin',
-            'email' => 'admin@preorder.hopexito.com',
-            'password' => bcrypt('181d12b7a9A'),
+            'email' => 'admin@gmail.com',
+            'password' => bcrypt('pass'),
             'role_id' => 1,
             'email_verified_at' => now(),
         ]);
 
         $user = User::create([
-            'name' => 'Poster',
-            'email' => 'poster@gmail.com',
-            'password' => bcrypt('123'),
+            'name' => 'User',
+            'email' => 'user@gmail.com',
+            'password' => bcrypt('pass'),
             'role_id' => 2,
             'email_verified_at' => now(),
         ]);

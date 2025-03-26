@@ -31,7 +31,7 @@
                                 {{ $campaign->description }}
                             </p>
                             <p class="px-2 py-1 mt-1 text-sm bg-green-500 rounded-md w-fit">
-                                RM {{ number_format($campaign->price/100,2) }}
+                                RM {{ number_format($campaign->price / 100, 2) }}
                             </p>
                         </div>
                     </div>

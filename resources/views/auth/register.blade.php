@@ -17,7 +17,7 @@
             </p>
         </x-slot>
 
-        <div class="flex flex-col items-center space-y-4">
+        {{-- <div class="flex flex-col items-center space-y-4">
             <a href="{{ route('google.redirect') }}"
                 class="flex items-center justify-center w-full gap-2 p-2 transition-all duration-300 ease-out border-2 border-gray-800 rounded-md hover:bg-gray-800 hover:text-gray-200 hover:ring-2 hover:ring-offset-2 hover:ring-gray-800">
                 <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" class="w-6 h-6" viewBox="0 0 48 48">
@@ -37,7 +37,7 @@
                 Sign up with Google
             </a>
             <p>OR</p>
-        </div>
+        </div> --}}
 
         <x-validation-errors class="mb-4" />
 

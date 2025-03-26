@@ -13,7 +13,8 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
     {{-- File Pond --}}
     <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
-    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet">
+    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
+        rel="stylesheet">
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <!-- Styles -->
@@ -36,6 +37,11 @@
             <main>
                 {{ $slot }}
             </main>
+            <footer class="px-3 py-4 border border-indigo-500 rounded-md bg-zinc-900 sm:px-6 lg:px-8">
+                <p class="text-sm font-medium leading-tight tracking-wider text-center text-gray-200 ">
+                    {{ __('Made by Suhail and Hasif') }}
+                </p>
+            </footer>
         </div>
     </div>
     @stack('modals')

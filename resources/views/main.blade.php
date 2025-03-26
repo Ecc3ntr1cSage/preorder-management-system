@@ -33,7 +33,7 @@
                 <img src="{{ asset('asset/preorder.png') }}" alt="" class="w-16 -mr-2" />
                 <h1
                     class="p-1 font-extrabold text-transparent text-7xl bg-clip-text bg-gradient-to-r from-sky-400 via-indigo-500 to-purple-400">
-                    reorder by HopeXito
+                    reorder Management System
                 </h1>
             </div>
             <p class="mt-4 text-lg text-gray-200">We know how hard it is to manage preorder campaigns manually. It

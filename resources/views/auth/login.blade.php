@@ -8,6 +8,7 @@
                 </a>
                 <hr class="h-1 mx-auto my-4 border-0 rounded w-36 bg-gradient-to-r from-indigo-500 to-fuchsia-500">
             </div>
+            <p>Preorder Management System</p>
             <p class="mt-4 text-2xl font-bold tracking-widest text-gray-800 uppercase">Login</p>
             <p class="text-gray-700">Welcome back.</p>
         </x-slot>
@@ -49,30 +50,29 @@
                 <x-input id="email" class="block w-full mt-1" type="email" name="email" :value="old('email')"
                     autofocus autocomplete="username" />
             </div>
-
             <div class="mt-4">
-                <div class="flex items-center justify-between">
-                    <x-label for="password" value="{{ __('Password') }}" />
-                    @if (Route::has('password.request'))
-                        <a class="text-sm text-gray-600 underline rounded-md hover:text-gray-900"
-                            href="{{ route('password.request') }}">
-                            {{ __('Forgot your password?') }}
-                        </a>
-                    @endif
-                </div>
+                <x-label for="password" value="{{ __('Password') }}" />
                 <x-input id="password" class="block w-full mt-1" type="password" name="password"
                     autocomplete="current-password" />
             </div>
             <x-button type="submit" class="w-full mt-4">
                 {{ __('Log in') }}
             </x-button>
-        </form>
 
-        <p class="mt-4 text-sm text-gray-700">Don't have an account?
-            <span>
-                <a wire:navigate href="{{ route('register') }}"
-                    class="text-gray-600 underline hover:text-indigo-600">Click here</a>
-            </span>
-        </p>
+        </form>
+        <div class="mt-4">
+            @if (Route::has('password.request'))
+                <a class="text-sm text-gray-600 underline rounded-md hover:text-gray-900"
+                    href="{{ route('password.request') }}">
+                    {{ __('Forgot your password?') }}
+                </a>
+            @endif
+            <p class="text-sm text-gray-700">Don't have an account?
+                <span>
+                    <a wire:navigate href="{{ route('register') }}"
+                        class="text-gray-600 underline hover:text-indigo-600">Click here</a>
+                </span>
+            </p>
+        </div>
     </x-authentication-card>
 </x-guest-layout>

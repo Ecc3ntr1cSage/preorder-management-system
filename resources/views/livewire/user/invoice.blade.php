@@ -58,7 +58,7 @@
                     <div>
                         <h5 class="font-medium text-gray-400 uppercase sm:hidden">Amount</h5>
                         <p class="text-gray-200 sm:text-end">
-                            RM{{ number_format((($order->amount + $order->discount - $order->shipping) / $order->quantity) / 100, 2) }}
+                            RM{{ number_format(($order->amount + $order->discount - $order->shipping) / $order->quantity / 100, 2) }}
                         </p>
                     </div>
                 </div>
@@ -81,11 +81,11 @@
                         @endif
                     </dl>
                     @if ($order->discount != 0)
-                    <dl class="grid sm:grid-cols-5 gap-x-3">
-                        <dt class="col-span-3 font-semibold text-gray-200">Discount</dt>
-                        <dd class="col-span-2 text-gray-200">
-                            - RM{{ number_format($order->discount / 100, 2) }}</dd>
-                    </dl>
+                        <dl class="grid sm:grid-cols-5 gap-x-3">
+                            <dt class="col-span-3 font-semibold text-gray-200">Discount</dt>
+                            <dd class="col-span-2 text-gray-200">
+                                - RM{{ number_format($order->discount / 100, 2) }}</dd>
+                        </dl>
                     @endif
                     <dl class="grid sm:grid-cols-5 gap-x-3">
                         <dt class="col-span-3 font-semibold text-indigo-400">Amount paid:
