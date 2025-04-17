@@ -13,21 +13,21 @@ class Payment extends Component
 {
     #[Rule('required', message: 'Please provide an email.')]
     #[Rule('email', message: 'Incorrect email format.')]
-    public $email = 'imeor0655@gmail.com';
+    public $email = 'muhammadsuhailroslan@gmail.com';
 
     #[Rule('required', message: 'Please provide your name.')]
-    public $name = 'Meor Izzuddin';
+    public $name = 'Suhail Roslan';
 
     #[Rule('required', message: 'Please provide a contact number.')]
     #[Rule('numeric', message: 'Phone has to be numeric.')]
-    public $phone = '0183552589';
+    public $phone = '01111835900';
 
     #[Rule('required', message: 'Please provide an address.')]
-    public $address = 'A-25-23A, Canopy Hills';
+    public $address = 'Shah Alam';
 
     #[Rule('required', message: 'Postal code can\'t be empty.')]
     #[Rule('required', message: 'Postal code invalid format.')]
-    public $postcode = '43500';
+    public $postcode = '40000';
 
     #[Rule('required', message: 'Please select a state.')]
     public $state;
