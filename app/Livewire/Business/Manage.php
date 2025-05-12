@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\User;
+namespace App\Livewire\Business;
 
 use App\Models\Campaign;
 use Illuminate\Support\Facades\Auth;
@@ -13,6 +13,6 @@ class Manage extends Component
     {
         $campaigns = Campaign::with('images')->where('user_id', Auth::user()->id)->get();
 
-        return view('livewire.user.manage', compact('campaigns'));
+        return view('livewire.business.manage', compact('campaigns'));
     }
 }

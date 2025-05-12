@@ -41,8 +41,29 @@
 
         <x-validation-errors class="mb-4" />
 
-        <form method="POST" action="{{ route('register') }}">
+        <form method="POST" action="{{ route('register') }}" x-data="{ role_id: 2 }">
             @csrf
+            <div class="flex items-center gap-4 mb-4">
+                <div class="relative w-1/2 h-20">
+                    <input type="radio" name="role_id" x-model="role_id" x-on:click="role_id = 2" value="2"
+                        id="seller_radio" class="hidden" />
+                    <label for="seller_radio"
+                        :class="role_id == 2 ? 'border-indigo-600' :
+                            'border-zinc-400'"
+                        class="grid p-6 border-2 cursor-pointer md:p-8 md:text-sm place-items-center rounded-xl hover:border-indigo-500">Business
+                        Signup
+                    </label>
+                </div>
+                <div class="relative w-1/2 h-20">
+                    <input type="radio" name="role_id" x-model="role_id" x-on:click="role_id = 3" value="3"
+                        id="user_radio" class="hidden" />
+                    <label x-cloak for="user_radio"
+                        :class="role_id == 3 ? 'border-indigo-600' :
+                            'border-zinc-400'"
+                        class="grid px-3 py-6 border-2 cursor-pointer md:p-8 md:text-sm place-items-center rounded-xl hover:border-indigo-500">Customer
+                        Signup</label>
+                </div>
+            </div>
             <div>
                 <x-label for="name" value="{{ __('Name') }}" />
                 <x-input id="name" class="block w-full mt-1" type="text" name="name" :value="old('name')"

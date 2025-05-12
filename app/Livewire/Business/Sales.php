@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\User;
+namespace App\Livewire\Business;
 
 use App\Models\Campaign;
 use App\Models\Order;
@@ -62,6 +62,6 @@ class Sales extends Component
 
         $campaigns = Campaign::where('user_id', Auth::user()->id)->select('id','title')->get();
         
-        return view('livewire.user.sales', compact('orders','campaigns'));
+        return view('livewire.business.sales', compact('orders','campaigns'));
     }
 }

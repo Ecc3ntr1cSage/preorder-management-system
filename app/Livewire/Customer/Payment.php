@@ -1,33 +1,38 @@
 <?php
 
-namespace App\Livewire\User;
+namespace App\Livewire\Customer;
 
 use Carbon\Carbon;
 use App\Models\Campaign;
+use App\Models\Order;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class Payment extends Component
 {
     #[Rule('required', message: 'Please provide an email.')]
     #[Rule('email', message: 'Incorrect email format.')]
-    public $email = 'muhammadsuhailroslan@gmail.com';
+    public $email;
 
     #[Rule('required', message: 'Please provide your name.')]
-    public $name = 'Suhail Roslan';
+    public $name;
 
     #[Rule('required', message: 'Please provide a contact number.')]
     #[Rule('numeric', message: 'Phone has to be numeric.')]
-    public $phone = '01111835900';
+    public $phone = '0183552589';
 
     #[Rule('required', message: 'Please provide an address.')]
     public $address = 'Shah Alam';
 
     #[Rule('required', message: 'Postal code can\'t be empty.')]
     #[Rule('required', message: 'Postal code invalid format.')]
-    public $postcode = '40000';
+    public $postcode = '56000';
 
     #[Rule('required', message: 'Please select a state.')]
     public $state;
@@ -45,6 +50,8 @@ class Payment extends Component
     {
         if (session('preorder') !== null) {
             $this->preorder = session('preorder');
+            $this->email = Auth::user()->email;
+            $this->name = Auth::user()->name;
         } else {
             return $this->redirect('/', navigate: true);
         }
@@ -116,56 +123,60 @@ class Payment extends Component
         // Initialize amount value
         $amount = round($this->calculate()['total']);
         // Post to billplz
-        $billplz = array(
-            'collection_id' => env('BILLPLZ_COLLECTION'),
-            'email' => $this->email,
-            'name' => $this->name,
-            'mobile' => $this->phone,
-            'description' => $this->campaign->title,
-            'amount' => $amount,
-            'reference_1_label' => "Bank Code",
-            'reference_1' => $this->bankCode,
-            'callback_url' => route('billplz-callback'),
-            'redirect_url' => route('billplz-redirect'),
-        );
-        // Initialize payment data
-        $paymentData = [
-            'campaign_id' => $this->preorder['campaign_id'],
-            'quantity' => $this->preorder['quantity'],
-            'variations' => $this->preorder['variations'],
-            'email' => $this->email,
-            'name' => $this->name,
-            'phone' => $this->phone,
-            'address' => $this->address,
-            'postcode' => $this->postcode,
-            'state' => $this->state,
-            'amount' => $billplz['amount'],
-            'fee' => $this->campaign->fee * $this->preorder['quantity'],
-            'shipping' => $this->shipping * 100,
-        ];
-        // If coupon is applied
-        if ($this->discount !== 0) {
-            $paymentData['coupon_id'] = $this->campaign->coupon->id;
+        try {
+            DB::beginTransaction();
+
+            $order = Order::create([
+                'collection_id' => env('BILLPLZ_COLLECTION'),
+                'campaign_id'   => $this->preorder['campaign_id'],
+                'user_id'       => auth()->id(),
+                'email'         => $this->email,
+                'name'          => $this->name,
+                'phone'         => $this->phone,
+                'status'        => 0,
+                'amount'        => $amount,
+                'discount'      => $this->discount,
+                'quantity'      => $this->preorder['quantity'],
+                'fee'           => $this->campaign->fee * $this->preorder['quantity'],
+                'shipping'      => $this->shipping * 100,
+                'variations'    => $this->preorder['variations'],
+                'paid'          => false,
+                'address'       => $this->address,
+                'postcode'      => $this->postcode,
+                'state'         => $this->state,
+            ]);
+
+            $billplzPayload = [
+                'collection_id'     => env('BILLPLZ_COLLECTION'),
+                'email'             => $this->email,
+                'name'              => $this->name,
+                'mobile'            => $this->phone,
+                'description'       => $this->campaign->title,
+                'amount'            => $amount,
+                'reference_1_label' => "Bank Code",
+                'reference_1'       => $this->bankCode,
+                'callback_url'      => route('billplz-callback'),
+                'redirect_url'      => route('billplz-redirect', $order->uuid),
+            ];
+
+            $response = Http::withBasicAuth(env('BILLPLZ_KEY'), env('BILLPLZ_SIGNATURE'))
+                ->post('https://www.billplz-sandbox.com/api/v3/bills', $billplzPayload);
+
+            if (!$response->successful()) {
+                Log::error('Billplz error: ' . $response->body());
+                throw new \Exception('Payment gateway error');
+            }
+
+            $order->update(['billplz_id' => $response->json('id')]);
+
+            DB::commit();
+
+            return redirect("https://www.billplz-sandbox.com/bills/{$response->json('id')}?auto_submit=true");
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Payment failed: ' . $e->getMessage());
+            abort(500, 'Something went wrong during payment.');
         }
-        // Store payment data to session
-        session(['payment' => $paymentData]);
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, 'https://www.billplz-sandbox.com/api/v3/bills');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $billplz);
-        curl_setopt($ch, CURLOPT_USERPWD, env('BILLPLZ_KEY') . ':' . env('BILLPLZ_SIGNATURE'));
-        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-
-        $result = curl_exec($ch);
-        $info = curl_getinfo($ch);
-        curl_close($ch);
-        $obj = json_decode($result);
-        $billId = $obj->id;
-
-        return redirect('https://www.billplz-sandbox.com/bills/' . $billId . '?auto_submit=true');
     }
 
     #[Layout('layouts.guest')]
@@ -175,6 +186,6 @@ class Payment extends Component
         $this->shippingArray = json_decode($this->campaign->shipping, true);
         $calculations = $this->calculate();
 
-        return view('livewire.user.payment', compact('calculations'));
+        return view('livewire.customer.payment', compact('calculations'));
     }
 }

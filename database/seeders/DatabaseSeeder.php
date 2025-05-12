@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        //Super admin
         User::create([
             'name' => 'Super Admin',
             'email' => 'superadmin@gmail.com',
@@ -22,7 +23,7 @@ class DatabaseSeeder extends Seeder
             'role_id' => 0,
             'email_verified_at' => now(),
         ]);
-
+        //Admin
         User::create([
             'name' => 'Admin',
             'email' => 'admin@gmail.com',
@@ -30,10 +31,10 @@ class DatabaseSeeder extends Seeder
             'role_id' => 1,
             'email_verified_at' => now(),
         ]);
-
+        //Business
         $user = User::create([
-            'name' => 'User',
-            'email' => 'user@gmail.com',
+            'name' => 'Bizz',
+            'email' => 'bizz@gmail.com',
             'password' => bcrypt('pass'),
             'role_id' => 2,
             'email_verified_at' => now(),
@@ -43,6 +44,14 @@ class DatabaseSeeder extends Seeder
             'user_id' => $user->id,
             'earning' => 0,
             'balance' => 0,
+        ]);
+        //Customer
+        User::create([
+            'name' => 'Cust',
+            'email' => 'cust@gmail.com',
+            'password' => bcrypt('pass'),
+            'role_id' => 3,
+            'email_verified_at' => now(),
         ]);
     }
 }

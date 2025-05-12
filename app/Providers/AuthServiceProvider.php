@@ -26,8 +26,12 @@ class AuthServiceProvider extends ServiceProvider
             return in_array($user->role_id, [0, 1]);
         });
 
-        Gate::define('user-nav', function ($user) {
+        Gate::define('business-nav', function ($user) {
             return $user->role_id == 2;
+        });
+
+        Gate::define('customer-nav', function ($user) {
+            return $user->role_id == 3;
         });
     }
 }

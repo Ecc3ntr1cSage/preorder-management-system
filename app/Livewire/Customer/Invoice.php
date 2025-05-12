@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\User;
+namespace App\Livewire\Customer;
 
 use App\Models\Order;
 use Livewire\Attributes\Layout;
@@ -13,6 +13,6 @@ class Invoice extends Component
     #[Layout('layouts.guest')]
     public function render()
     {
-        return view('livewire.user.invoice');
+        return view('livewire.customer.invoice');
     }
 }

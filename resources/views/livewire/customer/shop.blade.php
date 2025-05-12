@@ -1,9 +1,8 @@
 @inject('carbon', 'Carbon\Carbon')
-<x-slot name="header">
-    {{ __('Campaigns') }}
-</x-slot>
-<x-dashboard-panel>
-    <p class="mb-4 text-xl leading-tight tracking-wider">Ongoing</p>
+<section class="min-h-screen p-6 mx-auto max-w-7xl">
+    <div>
+
+    </div>
     <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 md:grid-cols-2">
         @foreach ($campaigns as $campaign)
             @php
@@ -11,7 +10,8 @@
                 $today = $carbon::today();
                 $daysLeft = $endDate->diffInDays($today);
             @endphp
-            <a href="{{ route('campaign.info', $campaign->slug) }}" wire:navigate class="relative block bg-black group">
+            <a href="{{ route('customer.show', $campaign->slug) }}" wire:navigate
+                class="relative block bg-black h-96 group">
                 <img alt="Campaign" src="{{ asset('storage/campaign/' . $campaign->images->first()->image) }}"
                     class="absolute inset-0 object-cover w-full h-full transition-opacity opacity-75 group-hover:opacity-50" />
                 <p
@@ -23,14 +23,15 @@
                         {{ $carbon::parse($campaign->start_date)->format('d F Y') }} -
                         {{ $carbon::parse($campaign->end_date)->format('d F Y') }}
                     </p>
-                    <p class="text-xl font-bold text-white capitalize sm:text-2xl">{{ $campaign->title }}</p>
-                    <div class="mt-32 sm:mt-48 lg:mt-64">
+                    <p class="px-2 py-1 mt-2 text-xl font-bold text-white capitalize rounded-md bg-black/70 w-fit">
+                        {{ $campaign->title }}</p>
+                    <div class="mt-12 sm:mt-20 lg:mt-40">
                         <div
                             class="transition-all transform translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
                             <p class="text-sm text-white">
                                 {{ $campaign->description }}
                             </p>
-                            <p class="px-2 py-1 mt-1 text-sm bg-green-500 rounded-md w-fit">
+                            <p class="px-2 py-1 mt-2 text-sm bg-green-500 rounded-md w-fit">
                                 RM {{ number_format($campaign->price / 100, 2) }}
                             </p>
                         </div>
@@ -39,5 +40,4 @@
             </a>
         @endforeach
     </div>
-    <x-flash />
-</x-dashboard-panel>
+</section>

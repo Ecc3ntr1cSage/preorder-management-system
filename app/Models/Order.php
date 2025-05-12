@@ -14,6 +14,7 @@ class Order extends Model
         'billplz_id',
         'collection_id',
         'campaign_id',
+        'user_id',
         'email',
         'name',
         'phone',
@@ -37,11 +38,13 @@ class Order extends Model
         return 'billplz_id';
     }
 
-    public function campaign(){
+    public function campaign()
+    {
         return $this->belongsTo(Campaign::class);
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->campaign->belongsTo(User::class);
     }
 }

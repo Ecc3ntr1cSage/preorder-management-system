@@ -20,6 +20,7 @@
 </head>
 
 <body>
+    <x-customer-navigation-menu />
     <div
         class="font-sans antialiased selection:bg-indigo-400 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-sky-200 via-indigo-200 to-zinc-200">
         {{ $slot }}

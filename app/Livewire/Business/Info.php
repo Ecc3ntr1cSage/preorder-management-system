@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\User;
+namespace App\Livewire\Business;
 
 use Carbon\Carbon;
 use App\Models\Campaign;
@@ -217,6 +217,6 @@ class Info extends Component
 
     public function render()
     {
-        return view('livewire.user.info');
+        return view('livewire.business.info');
     }
 }

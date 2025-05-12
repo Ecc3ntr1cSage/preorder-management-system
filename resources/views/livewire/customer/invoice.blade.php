@@ -3,8 +3,8 @@
     <div class="flex flex-col p-4 bg-gray-800 rounded-lg shadow-md sm:p-10">
         <div class="flex justify-between">
             <div>
-                <img src="{{ asset('asset/xito.png') }}" alt="" class="w-10 h-10" />
-                <h1 class="mt-2 text-lg font-semibold text-blue-600 md:text-xl dark:text-white">HopeXito</h1>
+                <img src="{{ asset('asset/preorder.png') }}" alt="" class="w-10" />
+                <h1 class="mt-2 text-lg font-semibold text-blue-600 md:text-xl dark:text-white"></h1>
             </div>
             <div class="text-end">
                 <h2 class="text-2xl font-semibold md:text-3xl dark:text-gray-200">Invoice #

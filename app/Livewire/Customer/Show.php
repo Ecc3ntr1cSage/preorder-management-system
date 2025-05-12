@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\User;
+namespace App\Livewire\Customer;
 
 use App\Models\Campaign;
 use App\Models\Question;
@@ -94,6 +94,6 @@ class Show extends Component
     #[Layout('layouts.guest')]
     public function render()
     {
-        return view('livewire.user.show');
+        return view('livewire.customer.show');
     }
 }

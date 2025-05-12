@@ -1,6 +1,6 @@
 @inject('carbon', 'Carbon\Carbon')
 <x-slot name="header">
-    <a href="{{ route('campaign.manage') }}" wire:navigate
+    <a href="{{ route('business.manage') }}" wire:navigate
         class="p-1 transition-all rounded-full hover:bg-zinc-600/60 hover:-translate-x-1">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
             class="w-6 h-6">

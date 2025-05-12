@@ -24,21 +24,24 @@ class CreateNewUser implements CreatesNewUsers
             'name' => ['required', 'string', 'max:255', 'unique:users,name', 'not_regex:/\'/'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => $this->passwordRules(),
+            'role_id' => ['required'],
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
         ])->validate();
-
+        
         $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
-            'role_id' => 2,
+            'role_id' => $input['role_id'],
         ]);
-
-        Wallet::create([
-            'user_id' => $user->id,
-            'earning' => 0,
-            'balance' => 0,
-        ]);
+        
+        if($user->role_id == 2){
+            Wallet::create([
+                'user_id' => $user->id,
+                'earning' => 0,
+                'balance' => 0,
+            ]);
+        }
 
         return $user;
     }

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Preorder by HopeXito') }}</title>
+    <title>{{ config('app.name', 'Preshop') }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -24,7 +24,7 @@
 <body class="font-sans antialiased selection:bg-indigo-600 selection:text-white">
     <x-banner />
     <div class="flex min-h-screen p-2 space-x-1 bg-neutral-800">
-        @livewire('navigation-menu')
+        <x-navigation-menu />
         <div class="w-full max-h-screen space-y-2 overflow-scroll">
             @if (isset($header))
                 <header class="px-4 py-6 mx-auto border border-indigo-500 rounded-md bg-zinc-900 sm:px-6 lg:px-8">

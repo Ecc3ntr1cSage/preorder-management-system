@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\User;
+namespace App\Livewire\Business;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
@@ -112,6 +112,6 @@ class Publish extends Component
 
     public function render()
     {
-        return view('livewire.user.publish');
+        return view('livewire.business.publish');
     }
 }

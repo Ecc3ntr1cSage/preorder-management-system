@@ -13,13 +13,14 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('billplz_id');
+            $table->string('billplz_id')->nullable();
             $table->string('collection_id');
             $table->unsignedBigInteger('campaign_id');
+            $table->unsignedBigInteger('user_id');
             $table->string('email');
             $table->string('name');
             $table->string('phone');
-            $table->integer('status')->default(1);
+            $table->integer('status')->comment('0: pending, 1: paid, 2: failed');
             $table->integer('amount');
             $table->integer('discount');
             $table->integer('quantity');
@@ -27,7 +28,7 @@ return new class extends Migration
             $table->integer('shipping')->nullable();
             $table->string('variations')->nullable();
             $table->string('paid');
-            $table->string('paid_at');
+            $table->string('paid_at')->nullable();
             $table->string('address');
             $table->string('postcode');
             $table->string('state');
@@ -35,7 +36,8 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('campaign_id')->references('id')->on('campaigns');
-            $table->index(['campaign_id','billplz_id']);
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->index(['campaign_id', 'billplz_id']);
         });
     }
 

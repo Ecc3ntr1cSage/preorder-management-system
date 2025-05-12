@@ -2,7 +2,7 @@
     <div class="grid min-h-screen grid-cols-10">
         <div class="px-4 py-6 col-span-full sm:py-12 lg:col-span-6">
             <div class="w-full max-w-lg mx-auto">
-                <a href="{{ route('campaign.show', $campaign->slug) }}" wire:navigate class="inline-block">
+                <a href="{{ route('customer.show', $campaign->slug) }}" wire:navigate class="inline-block">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor"
                         class="w-8 h-8 p-1 mb-4 transition-all rounded-full hover:bg-indigo-500/40 hover:-translate-x-1">

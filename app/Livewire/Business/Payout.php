@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\User;
+namespace App\Livewire\Business;
 
 use App\Models\Transaction;
 use App\Models\Wallet;
@@ -112,6 +112,6 @@ class Payout extends Component
 
     public function render()
     {
-        return view('livewire.user.payout');
+        return view('livewire.business.payout');
     }
 }
