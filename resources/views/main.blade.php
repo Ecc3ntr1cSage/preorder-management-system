@@ -8,8 +8,14 @@
         @if (Route::has('login'))
             <div class="z-10 flex items-center gap-4 p-6 text-right sm:fixed sm:top-0 sm:right-0">
                 @auth
-                    <a href="{{ url('/dashboard') }}" wire:navigate
-                        class="font-semibold text-gray-400 hover:text-sky-600">Dashboard</a>
+                    @can('business-nav')
+                        <a href="{{ url('/dashboard') }}" wire:navigate
+                            class="font-semibold text-gray-400 hover:text-sky-600">Dashboard</a>
+                    @endcan
+                    @can('customer-nav')
+                        <a href="{{ url('/shop') }}" wire:navigate
+                            class="font-semibold text-gray-400 hover:text-sky-600">Shop</a>
+                    @endcan
                 @else
                     <a href="{{ route('login') }}" wire:navigate class="font-semibold text-gray-400 hover:text-sky-600">Log
                         in</a>
@@ -17,15 +23,15 @@
                         <a href="{{ route('register') }}" wire:navigate
                             class="mx-4 font-semibold text-gray-400 hover:text-sky-600">Register</a>
                     @endif
+                    <a class="relative inline-block text-sm font-medium text-white transition group focus:outline-none focus:scale-95"
+                        href="{{ route('register') }}" wire:navigate>
+                        <span class="absolute inset-0 border border-sky-600 group-active:border-sky-500"></span>
+                        <span
+                            class="block px-12 py-3 transition-transform border bg-gradient-to-r from-sky-600 to-indigo-600 border-sky-600 active:border-sky-500 active:bg-sky-500 group-hover:-translate-x-1 group-hover:-translate-y-1">
+                            Start a Campaign
+                        </span>
+                    </a>
                 @endauth
-                <a class="relative inline-block text-sm font-medium text-white transition group focus:outline-none focus:scale-95"
-                    href="{{ route('login') }}" wire:navigate>
-                    <span class="absolute inset-0 border border-sky-600 group-active:border-sky-500"></span>
-                    <span
-                        class="block px-12 py-3 transition-transform border bg-gradient-to-r from-sky-600 to-indigo-600 border-sky-600 active:border-sky-500 active:bg-sky-500 group-hover:-translate-x-1 group-hover:-translate-y-1">
-                        Start a Campaign
-                    </span>
-                </a>
             </div>
         @endif
         <div class="flex flex-col items-center">

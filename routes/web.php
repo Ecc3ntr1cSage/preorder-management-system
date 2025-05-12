@@ -15,6 +15,7 @@ use App\Livewire\Business\Manage;
 use App\Livewire\Business\Sales;
 use App\Livewire\Business\Info;
 use App\Livewire\Business\Payout;
+use App\Livewire\Customer\History;
 use App\Livewire\Customer\Shop;
 use App\Livewire\Customer\Show;
 use App\Livewire\Customer\Payment;
@@ -67,6 +68,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
     Route::get('shop', Shop::class)->name('customer.shop');
     Route::get('payment', Payment::class)->name('customer.payment');
     Route::get('order/{order}', Invoice::class)->name('customer.invoice');
+    Route::get('past-orders/', History::class)->name('customer.history');
 });
 
 Route::get('{campaign}', Show::class)->name('customer.show');
