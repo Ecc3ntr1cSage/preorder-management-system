@@ -108,7 +108,7 @@
                 <tr wire:key="{{ $campaign->id }}" wire:loading.class="opacity-50"
                     class="transition bg-black/20 hover:bg-neutral-800 hover:text-indigo-400">
                     <td class="px-3 py-4 whitespace-nowrap">
-                        {{ $campaign->user->name }} 
+                        {{ $campaign->user->name }}
                     </td>
                     <td class="px-3 py-4 whitespace-nowrap">
                         <p class="capitalize">{{ $campaign->title }} ({{ $campaign->visitors->count() }})</p>
@@ -147,7 +147,7 @@
                         @endif
                     </td>
                     <td class="flex items-center gap-1 px-3 py-4 whitespace-nowrap">
-                        <a href="{{ route('campaign.show', $campaign->slug) }}" wire:navigate
+                        <a href="{{ route('customer.show', $campaign->slug) }}" wire:navigate
                             class="p-1 transition rounded-md bg-sky-500 hover:scale-110">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                 stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">

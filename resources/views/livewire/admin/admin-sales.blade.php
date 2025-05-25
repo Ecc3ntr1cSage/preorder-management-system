@@ -142,7 +142,7 @@
                         {{ $carbon::parse($order->paid_at)->format('j/n/y g:iA') }}
                     </td>
                     <td class="flex items-center gap-1 px-3 py-4 whitespace-nowrap">
-                        <a href="{{ route('invoice', $order->billplz_id) }}" wire:navigate
+                        <a href="{{ route('customer.invoice', $order->billplz_id) }}" wire:navigate
                             class="p-1 transition rounded-md bg-sky-500 hover:scale-110">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                 stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">
