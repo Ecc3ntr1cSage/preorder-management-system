@@ -101,7 +101,7 @@
         </x-admin-table>
     </x-admin-panel>
     <div class="grid grid-cols-1 lg:grid-cols-2">
-        <x-admin-panel>
+        <x-admin-panel fullHeight>
             <x-slot name="title">
                 {{ __('Wallet List') }}
             </x-slot>
@@ -164,7 +164,7 @@
                 </tbody>
             </x-admin-table>
         </x-admin-panel>
-        <x-admin-panel>
+        <x-admin-panel fullHeight>
             <x-slot name="title">
                 {{ __('Recent Transactions') }}
             </x-slot>

@@ -28,14 +28,14 @@
                     <div class="flex gap-2">
                         <div>
                             <x-label value="{{ __('Postal Code') }}" />
-                            <x-input type="text" wire:model="postcode" class="w-24 md:w-full" />
+                            <x-input type="text" wire:model.live.debounce.250ms="postcode" class="w-24 md:w-full" />
                             <x-input-error for="postcode" />
                         </div>
                         <div class="grow">
                             <x-label value="{{ __('State') }}" />
-                            <select wire:change="calculateShipping($event.target.value)" wire:model="state"
+                            <select wire:model="state"
                                 class="w-full transition border-2 border-gray-400 rounded-md bg-white/20 focus:border-violet-500 focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500">
-                                <option value="" selected>Choose a state</option>
+                                <option value="">Choose a state</option>
                                 @foreach (config('countries.malaysia.states') as $state)
                                     <option value="{{ $state }}">{{ $state }}</option>
                                 @endforeach

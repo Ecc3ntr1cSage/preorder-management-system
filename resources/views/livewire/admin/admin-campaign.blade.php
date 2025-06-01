@@ -2,7 +2,7 @@
 <x-slot name="header">
     {{ __('Campaigns') }}
 </x-slot>
-<x-admin-panel>
+<x-admin-panel fullHeight>
     <x-slot name="title">
         {{ __('All Campaigns') }}
     </x-slot>

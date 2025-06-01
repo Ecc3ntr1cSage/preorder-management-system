@@ -16,18 +16,36 @@ class PaymentController extends Controller
         $billplz = $request->input('billplz');
 
         if ($billplz['paid'] !== 'true') {
-            abort(400, 'Payment was not successful.');
+            Order::where('billplz_id', $billplz['id'])->delete();
+
+            session()->flash('message', 'Transaction Unsuccessful');
+            return redirect()->route('customer.payment');
         }
 
         $order = DB::transaction(function () use ($billplz) {
-            return tap(Order::where('billplz_id', $billplz['id'])->firstOrFail(), function ($order) use ($billplz) {
-                $order->update([
-                    'status'   => 1,
-                    'paid'     => true,
-                    'paid_at'  => Carbon::parse($billplz['paid_at']),
-                ]);
-            });
+            $order = Order::where('billplz_id', $billplz['id'])->firstOrFail();
+
+            $order->update([
+                'paid'    => true,
+                'paid_at' => Carbon::parse($billplz['paid_at']),
+            ]);
+
+            if ($order->discount !== 0) {
+                $order->campaign->coupon->increment('usage');
+            }
+
+            // Access campaign owner's wallet
+            $wallet = $order->campaign->user->wallet;
+
+            // Update wallet details (adjust as needed)
+            $wallet->update([
+                'earning' => $wallet->earning + ($order->amount - $order->fee),
+                'balance' => $wallet->balance + ($order->amount - $order->fee),
+            ]);
+
+            return $order;
         });
+
 
         return redirect()->route('customer.invoice', $order);
     }

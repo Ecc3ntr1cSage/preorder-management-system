@@ -2,9 +2,9 @@
 
 namespace App\Http\Responses;
 
-use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
+use Laravel\Fortify\Contracts\RegisterResponse as RegisterResponseContract;
 
-class LoginResponse implements LoginResponseContract
+class RegisterResponse implements RegisterResponseContract
 {
     public function toResponse($request)
     {

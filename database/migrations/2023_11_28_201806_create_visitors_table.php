@@ -14,10 +14,12 @@ return new class extends Migration
         Schema::create('visitors', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('campaign_id');
+            $table->unsignedBigInteger('user_id');
             $table->string('session_id');
             $table->timestamps();
 
             $table->foreign('campaign_id')->references('id')->on('campaigns');
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

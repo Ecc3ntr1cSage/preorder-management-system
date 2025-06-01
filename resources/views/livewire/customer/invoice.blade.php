@@ -1,7 +1,13 @@
 @inject('carbon', 'Carbon\Carbon')
 <div class="max-w-2xl min-h-screen p-1 mx-auto lg:p-6">
     <div class="flex flex-col p-4 bg-gray-800 rounded-lg shadow-md sm:p-10">
-        <div class="flex justify-between">
+        <div class="mx-auto">
+            <a href="{{ route('customer.history') }}"
+                class="px-4 py-2 text-xs text-white bg-gray-600 rounded-md hover:bg-gray-700 w-20px">
+                View All Past Orders
+            </a>
+        </div>
+        <div class="flex justify-between mt-8">
             <div>
                 <img src="{{ asset('asset/preorder.png') }}" alt="" class="w-10" />
                 <h1 class="mt-2 text-lg font-semibold text-blue-600 md:text-xl dark:text-white"></h1>
@@ -101,16 +107,16 @@
         <p class="font-semibold text-gray-200">Order Progress</p>
         <div class="relative">
             <p class="absolute w-full h-2 rounded-full bg-neutral-800"></p>
-            @if ($order->status == 1)
+            @if ($order->status == 0)
                 <p class="absolute w-[10%] h-2 bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 rounded-full">
                 </p>
-            @elseif($order->status == 2)
+            @elseif($order->status == 1)
                 <p class="absolute h-2 bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 rounded-full w-[40%]">
                 </p>
-            @elseif($order->status == 3)
+            @elseif($order->status == 2)
                 <p class="absolute w-[70%] h-2 bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 rounded-full">
                 </p>
-            @elseif($order->status == 4)
+            @elseif($order->status == 3)
                 <p class="absolute w-full h-2 rounded-full bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500">
                 </p>
             @endif

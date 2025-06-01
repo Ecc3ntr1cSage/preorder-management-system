@@ -268,9 +268,6 @@
                         <p
                             class="px-4 py-2 text-xl font-bold tracking-wider text-transparent uppercase bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400 w-fit">
                             {{ $campaign->coupon->code }}</p>
-                        <button class="absolute px-4 py-2 bg-indigo-500 rounded top-1 right-1">
-                            Copy
-                        </button>
                     </div>
                     <div class="px-2 my-3">
                         <p class="font-medium text-indigo-400">
@@ -280,7 +277,7 @@
                         <p>Total usage <span class="font-medium text-indigo-400">{{ $campaign->coupon->usage }}
                                 People </span></p>
                         <p>Valid until <span
-                                class="font-medium text-indigo-400">{{ $carbon::parse($campaign->coupon->end_date)->format('d F, Y') }}</span>
+                                class="font-medium text-indigo-400">{{ $carbon::parse($campaign->coupon->expiry)->format('d F, Y') }}</span>
                         </p>
                     </div>
                     <x-danger-button class="w-24"

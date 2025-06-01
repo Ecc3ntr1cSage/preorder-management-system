@@ -130,14 +130,10 @@
             @else
                 <div class="flex flex-col p-4 text-gray-200 rounded-md bg-black/40">
                     <x-label value="{{ __('Coupon Code') }}" />
-                    <div class="relative border-2 border-indigo-500 rounded-md">
+                    <div class="border-2 border-indigo-500 rounded-md w-fit">
                         <p
                             class="px-4 py-2 text-xl font-bold tracking-wider text-transparent uppercase bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400 w-fit">
                             {{ $campaign->coupon->code }}</p>
-                        <button x-on:click="execCommand('copy')"
-                            class="absolute px-4 py-2 bg-indigo-500 rounded top-0.5 right-0.5">
-                            Copy
-                        </button>
                     </div>
                     <div class="px-2 my-3">
                         <p class="font-medium text-indigo-400 ">

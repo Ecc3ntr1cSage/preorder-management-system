@@ -134,8 +134,22 @@
                     </div>
                 </div>
             </div>
+            <div class="mt-20">
+                <p class="text-center">Follow our social media</p>
+                <div class="flex items-center justify-center gap-3 mt-2">
+                    @foreach ($this->links as $key => $url)
+                        @if ($url)
+                            <a href="{{ $url }}" target="_blank" class="inline-flex items-center gap-1">
+                                {!! config("icons.socials.$key") !!}
+                            </a>
+                        @endif
+                    @endforeach
+                </div>
+            </div>
+
             <hr class="my-12 border-2 border-indigo-500" />
             <div class="max-w-2xl mx-auto mt-8">
+
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-lg font-bold text-gray-900 lg:text-2xl">Questions
                         ({{ $campaign->questions->count() }})</h2>
@@ -147,6 +161,7 @@
                     <button type="submit" wire:target="enquiry"
                         class="w-1/4 px-6 py-2 mt-2 text-sm text-white transition bg-gray-800 rounded-md hover:bg-indigo-500">Submit</button>
                 </form>
+
                 @foreach ($campaign->questions as $question)
                     <article class="px-6 py-4 mt-4 text-base rounded-lg bg-gray-700/10">
                         <p class="text-sm text-indigo-700"> <span class="text-xs text-gray-900/80">Posted on</span>

@@ -20,11 +20,12 @@
         </div>
         <div class="col-span-6 sm:col-span-4">
             <x-label value="{{ __('Facebook') }}" />
-            <x-input type="text" class="block w-full mt-1" wire:model="links.facebook" autocomplete="links.facebook" />
+            <x-input type="text" class="block w-full mt-1" wire:model="links.facebook"
+                autocomplete="links.facebook" />
             <x-input-error for="links.facebook" class="mt-2" />
         </div>
     </x-slot>
-    
+
     <x-slot name="actions">
         <x-action-message class="mr-3" on="saved">
             {{ __('Saved.') }}

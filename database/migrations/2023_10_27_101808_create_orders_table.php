@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('name');
             $table->string('phone');
-            $table->integer('status')->comment('0: pending, 1: paid, 2: failed');
+            $table->integer('status')->comment('0: start, 1: end, 2: shipped, 3:delivered');
             $table->integer('amount');
             $table->integer('discount');
             $table->integer('quantity');

@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Laravel\Fortify\Contracts\RegisterResponse;
+use App\Http\Responses\RegisterResponse as CustomRegisterResponse;
 
 class AppServiceProvider extends ServiceProvider
 {

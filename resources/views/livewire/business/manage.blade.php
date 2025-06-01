@@ -19,12 +19,14 @@
                     {{ $daysLeft }} {{ $daysLeft === 1 ? 'day' : 'days' }} left</p>
                 <div class="relative p-4 sm:p-6 lg:p-8">
                     <p
-                        class="px-2 py-1 text-sm font-medium tracking-wider text-indigo-400 uppercase rounded-md bg-black/70 w-fit">
+                        class="px-2 py-1 text-xs font-medium tracking-wider text-indigo-400 uppercase rounded-md bg-black/70 w-fit">
                         {{ $carbon::parse($campaign->start_date)->format('d F Y') }} -
                         {{ $carbon::parse($campaign->end_date)->format('d F Y') }}
                     </p>
-                    <p class="px-2 py-1 mt-2 text-xl font-bold text-white capitalize rounded-md bg-black/70 w-fit">
+                    <p
+                        class="px-2 py-1 mt-2 text-base tracking-wider text-white capitalize rounded-md bg-black/70 w-fit">
                         {{ $campaign->title }}</p>
+
                     <div class="mt-12 sm:mt-20 lg:mt-40">
                         <div
                             class="transition-all transform translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
@@ -34,6 +36,8 @@
                             <p class="px-2 py-1 mt-2 text-sm bg-green-500 rounded-md w-fit">
                                 RM {{ number_format($campaign->price / 100, 2) }}
                             </p>
+                            <p class="px-2 py-1 mt-2 text-xs rounded-md bg-zinc-300 w-fit">
+                                Views: {{ $campaign->visitors->count() }}</p>
                         </div>
                     </div>
                 </div>

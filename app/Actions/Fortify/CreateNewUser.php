@@ -27,15 +27,16 @@ class CreateNewUser implements CreatesNewUsers
             'role_id' => ['required'],
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
         ])->validate();
-        
+
         $user = User::create([
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
             'role_id' => $input['role_id'],
+            'email_verified_at' => now(),
         ]);
-        
-        if($user->role_id == 2){
+
+        if ($user->role_id == 2) {
             Wallet::create([
                 'user_id' => $user->id,
                 'earning' => 0,

@@ -32,7 +32,7 @@ class Payment extends Component
 
     #[Rule('required', message: 'Postal code can\'t be empty.')]
     #[Rule('required', message: 'Postal code invalid format.')]
-    public $postcode = '56000';
+    public $postcode;
 
     #[Rule('required', message: 'Please select a state.')]
     public $state;
@@ -57,6 +57,28 @@ class Payment extends Component
         }
     }
 
+    public function updatedPostcode($value)
+    {
+        if (strlen($value) < 5) return;
+
+        $this->state = $this->getState($value);
+        $this->calculateShipping($this->state);
+    }
+
+    private function getState($postcode)
+    {
+        $postcode = str_pad($postcode, 5, '0', STR_PAD_LEFT);
+        $ranges = config('countries.malaysia.postcodes');
+
+        foreach ($ranges as $state => [$start, $end]) {
+            if ($postcode >= $start && $postcode <= $end) {
+                return ucwords(strtolower($state));
+            }
+        }
+
+        return '';
+    }
+
     public function applyCoupon()
     {
         $this->validate([
@@ -65,7 +87,7 @@ class Payment extends Component
 
         $coupon = $this->campaign->coupon;
 
-        if ($this->couponCode !== $coupon->code) {
+        if (strcasecmp($this->couponCode, $coupon->code) !== 0) {
             $this->dispatch('error', message: 'Invalid Coupon');
             return;
         }
@@ -79,17 +101,19 @@ class Payment extends Component
             $this->dispatch('error', message: 'Coupon Expired');
             return;
         }
+
         $this->discount = $coupon->discount;
     }
 
     public function calculateShipping($state)
     {
-        if (empty(array_filter($this->shippingArray))) {
-            return;
-        }
-        if ($state == 'Sarawak') {
+        if (empty(array_filter($this->shippingArray))) return;
+
+        $state = strtolower($state);
+
+        if ($state === 'sarawak') {
             $this->shipping = $this->shippingArray['sarawak'];
-        } elseif ($state == 'Sabah' || $state == 'Labuan') {
+        } elseif (in_array($state, ['sabah', 'labuan'])) {
             $this->shipping = $this->shippingArray['sabah'];
         } else {
             $this->shipping = $this->shippingArray['west_malaysia'];
@@ -135,7 +159,7 @@ class Payment extends Component
                 'phone'         => $this->phone,
                 'status'        => 0,
                 'amount'        => $amount,
-                'discount'      => $this->discount,
+                'discount'      => $this->discount * 100,
                 'quantity'      => $this->preorder['quantity'],
                 'fee'           => $this->campaign->fee * $this->preorder['quantity'],
                 'shipping'      => $this->shipping * 100,

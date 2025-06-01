@@ -2,7 +2,7 @@
 <x-slot name="header">
     {{ __('Sales') }}
 </x-slot>
-<x-admin-panel>
+<x-admin-panel fullHeight>
     <x-slot name="title">
         {{ __('Sales Order') }}
     </x-slot>
@@ -98,9 +98,6 @@
                         @endif
                     </span>
                 </th>
-                <th scope="col" class="px-3 py-4 tracking-wider">
-                    Link
-                </th>
             </tr>
         </thead>
         <tbody class="text-left bg-neutral-800">
@@ -140,16 +137,6 @@
                     </td>
                     <td class="px-3 py-4 whitespace-nowrap">
                         {{ $carbon::parse($order->paid_at)->format('j/n/y g:iA') }}
-                    </td>
-                    <td class="flex items-center gap-1 px-3 py-4 whitespace-nowrap">
-                        <a href="{{ route('customer.invoice', $order->billplz_id) }}" wire:navigate
-                            class="p-1 transition rounded-md bg-sky-500 hover:scale-110">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-white">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
-                            </svg>
-                        </a>
                     </td>
                 </tr>
             @endforeach

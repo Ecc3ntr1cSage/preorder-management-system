@@ -28,7 +28,7 @@
                     <div class="mt-12 sm:mt-20 lg:mt-40">
                         <div
                             class="transition-all transform translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
-                            <p class="text-sm text-white">
+                            <p class="text-sm text-white truncate">
                                 {{ $campaign->description }}
                             </p>
                             <p class="px-2 py-1 mt-2 text-sm bg-green-500 rounded-md w-fit">

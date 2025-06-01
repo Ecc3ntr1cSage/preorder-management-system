@@ -8,10 +8,14 @@ use Livewire\Component;
 
 class Manage extends Component
 {
-    
+
     public function render()
     {
-        $campaigns = Campaign::with('images')->where('user_id', Auth::user()->id)->get();
+
+        $campaigns = Campaign::with('images')
+            ->withCount('visitors')
+            ->where('user_id', Auth::user()->id)
+            ->get();
 
         return view('livewire.business.manage', compact('campaigns'));
     }

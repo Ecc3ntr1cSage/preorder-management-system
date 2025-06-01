@@ -13,10 +13,16 @@ class Visitor extends Model
     protected $fillable = [
         'campaign_id',
         'session_id',
+        'user_id'
     ];
 
     public function campaign()
     {
         return $this->belongsTo(Campaign::class);
+    }
+
+    public function visitors()
+    {
+        return $this->hasMany(Visitor::class);
     }
 }

@@ -25,19 +25,39 @@ class Show extends Component
     public function mount()
     {
         session()->forget('preorder');
-        // Track page visit via session
-        $sessionId = Session::getId();
+
+        $sessionId = session()->getId();
+        $user = auth()->user();
+
+        // If logged in and not role 3, skip entirely
+        if ($user && $user->role_id !== 3) {
+            return;
+        }
+
+        $userId = $user ? $user->id : null;
+
         $visitor = Visitor::where('session_id', $sessionId)
             ->where('campaign_id', $this->campaign->id)
+            ->when($userId, fn($query) => $query->where('user_id', $userId))
             ->first();
 
         if (!$visitor) {
             Visitor::create([
-                'session_id' => $sessionId,
-                'campaign_id' => $this->campaign->id,
+                'session_id'   => $sessionId,
+                'user_id'      => $userId,
+                'campaign_id'  => $this->campaign->id,
             ]);
         }
     }
+
+
+    public function getLinksProperty()
+    {
+        return collect(json_decode($this->campaign->user->links ?? '{}', true))
+            ->map(fn($url) => $url ? 'https://www.' . ltrim($url, '/') : '')
+            ->toArray();
+    }
+
 
     public function enquiry()
     {
@@ -59,8 +79,7 @@ class Show extends Component
     public function hasVariations($variations)
     {
         $variations = json_decode($variations, true);
-        foreach($variations as $variation)
-        {
+        foreach ($variations as $variation) {
             if (!empty($variation['name']) || !empty($variation['values'])) {
                 return true; // At least one variation contains values
             }
@@ -72,13 +91,12 @@ class Show extends Component
     {
         session()->forget('preorder');
 
-        if($this->hasVariations($this->campaign->variations))
-        {
+        if ($this->hasVariations($this->campaign->variations)) {
             $this->validate([
                 'selectedVariations' => 'required',
             ]);
         }
-       
+
         $variation = implode(', ', array_values($this->selectedVariations));
         session([
             'preorder' => [

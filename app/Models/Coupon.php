@@ -19,7 +19,8 @@ class Coupon extends Model
         'usage',
     ];
 
-    public function campaign(){
+    public function campaign()
+    {
         return $this->belongsTo(Campaign::class);
     }
 }
