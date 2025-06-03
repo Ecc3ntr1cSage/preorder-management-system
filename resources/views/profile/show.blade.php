@@ -19,7 +19,6 @@
             <a class="hover:text-gray-100/70" href="#profile">Profile Information</a>
             <a class="hover:text-gray-100/70" href="#password">Update Password</a>
             <a class="hover:text-gray-100/70" href="#social">Social Links</a>
-            <a class="hover:text-gray-100/70" href="#2fa">2FA</a>
             <a class="hover:text-gray-100/70" href="#session">Browser Sessions</a>
             <a class="hover:text-gray-100/70" href="#delete">Delete Account</a>
         </div>

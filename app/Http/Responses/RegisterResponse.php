@@ -13,7 +13,7 @@ class RegisterResponse implements RegisterResponseContract
         $roleRoutes = [
             0 => 'admin.overview',
             1 => 'admin.overview',
-            2 => 'business.dashboard',
+            2 => 'business.publish',
             3 => 'customer.shop',
         ];
 

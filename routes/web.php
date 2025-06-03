@@ -56,7 +56,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified',
 
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified', 'role:2'])->group(function () {
-    Route::get('dashboard', Dashboard::class)->name('business.dashboard');
+    // Route::get('dashboard', Dashboard::class)->name('business.dashboard');
     Route::get('dashboard/publish', Publish::class)->name('business.publish');
     Route::get('dashboard/campaigns', Manage::class)->name('business.manage');
     Route::get('dashboard/campaigns/{campaign}', Info::class)->name('business.info');

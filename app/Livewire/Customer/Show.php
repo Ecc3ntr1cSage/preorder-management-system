@@ -29,22 +29,18 @@ class Show extends Component
         $sessionId = session()->getId();
         $user = auth()->user();
 
-        // If logged in and not role 3, skip entirely
-        if ($user && $user->role_id !== 3) {
+        if ($user && $user->role_id != 3) {
             return;
         }
 
-        $userId = $user ? $user->id : null;
-
         $visitor = Visitor::where('session_id', $sessionId)
             ->where('campaign_id', $this->campaign->id)
-            ->when($userId, fn($query) => $query->where('user_id', $userId))
             ->first();
 
         if (!$visitor) {
             Visitor::create([
                 'session_id'   => $sessionId,
-                'user_id'      => $userId,
+                'user_id'      => $user?->id,
                 'campaign_id'  => $this->campaign->id,
             ]);
         }
