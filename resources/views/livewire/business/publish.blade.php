@@ -8,12 +8,10 @@
             <p class="text-sm text-gray-900">Upload up to 5 captivating images of your preorder product. <span
                     class="ml-1 text-xs text-blue-700">* You can remove and replace images as needed later. </span>
             </p>
-            <div class="grid grid-cols-2 gap-4 mt-2 lg:gap-6 lg:grid-cols-5">
-                <x-filepond wire:model="image" accept="image/*" />
-                <x-filepond wire:model="image" accept="image/*" />
-                <x-filepond wire:model="image" accept="image/*" />
-                <x-filepond wire:model="image" accept="image/*" />
-                <x-filepond wire:model="image" accept="image/*" />
+            <div class="mt-3 rounded-2xl border-2 border-dashed border-ink/20 bg-white p-6 hover:border-accent">
+                <label for="campaign-images" class="block cursor-pointer text-sm font-semibold text-ink">Choose up to five campaign images</label>
+                <input id="campaign-images" type="file" wire:model="image" accept="image/*" multiple class="mt-3 block w-full text-sm text-ink/60 file:mr-4 file:rounded-full file:border-0 file:bg-ink file:px-4 file:py-2 file:font-semibold file:text-white hover:file:bg-accent" />
+                <x-input-error for="image.*" />
             </div>
             {{-- <x-input-error for="image.*" /> --}}
             <hr class="my-3 border border-indigo-700/70" />

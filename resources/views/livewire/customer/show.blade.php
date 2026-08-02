@@ -1,186 +1,76 @@
 @inject('carbon', 'Carbon\Carbon')
 <div>
-    <section class="py-12 sm:py-16">
-        <div class="container px-4 mx-auto">
-            <div class="grid grid-cols-1 gap-12 mt-8 lg:col-gap-12 xl:col-gap-16 lg:mt-12 lg:grid-cols-5 lg:gap-16">
-                <div class="lg:col-span-3 lg:row-end-1">
-                    <div class="lg:flex lg:items-start" x-data="{ image: {{ $campaign->images->first()->id }} }">
-                        <div class="lg:order-2 lg:ml-5">
-                            @foreach ($campaign->images as $image)
-                                <div x-cloak x-show="image == {{ $image->id }}"
-                                    class="max-w-xl overflow-hidden rounded-lg lg:shadow-lg shadow-black/70">
-                                    <img class="object-cover w-full max-w-full max-h-screen"
-                                        src="{{ asset('storage/campaign/' . $image->image) }}" alt="" />
-                                </div>
-                            @endforeach
-                        </div>
-                        <div class="w-full mt-2 lg:order-1 lg:w-32 lg:flex-shrink-0">
-                            <div class="flex flex-row items-start gap-1 lg:gap-0 lg:flex-col">
-                                @foreach ($campaign->images as $image)
-                                    <button type="button" x-on:click="image = {{ $image->id }}"
-                                        x-bind:class="image == {{ $image->id }} ? 'ring ring-indigo-500' : ''"
-                                        class="h-20 mb-3 overflow-hidden text-center rounded-lg flex-0 aspect-square">
-                                        <img class="object-cover w-full h-full"
-                                            src="{{ asset('storage/campaign/' . $image->image) }}" class="max-h-96" />
-                                    </button>
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
+    @php($cover = $campaign->images->first())
+    <section class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-10 lg:py-16">
+        <div class="grid gap-10 lg:grid-cols-[1.1fr_.9fr] lg:items-start lg:gap-16">
+            <div class="space-y-4">
+                <div class="relative aspect-[4/3] overflow-hidden rounded-[2rem] bg-ink">
+                    <img src="{{ $cover ? asset('storage/campaign/' . $cover->image) : asset('asset/checkout2.webp') }}" alt="{{ $campaign->title }} campaign" class="h-full w-full object-cover opacity-90">
+                    <span class="absolute left-5 top-5 rounded-full bg-paper px-3 py-1.5 text-xs font-bold uppercase tracking-wider">{{ $campaign->end_date->isFuture() ? 'Open for preorders' : 'Campaign ended' }}</span>
                 </div>
-                <form wire:submit.prevent="preorder" class="lg:col-span-2 lg:row-span-2 lg:row-end-2"
-                    x-data="{ selectedVariations: {} }">
-                    @csrf
-                    <h1 class="-mt-8 text-2xl font-bold text-gray-900 capitalize lg:mt-0 sm:text-3xl">
-                        {{ $campaign->title }}</h1>
-                    @php
-                        $endDate = $carbon::parse($campaign->end_date);
-                        $today = $carbon::today();
-                        $daysLeft = $endDate->diffInDays($today);
-                    @endphp
-                    <div class="flex items-center mt-5 mb-2">
-                        <p
-                            class="px-2 py-1 text-sm font-medium tracking-widest text-indigo-400 uppercase rounded-md bg-black/70 w-fit">
-                            {{ $carbon::parse($campaign->start_date)->format('d F Y') }} -
-                            {{ $carbon::parse($campaign->end_date)->format('d F Y') }}
-                        </p>
+                @if ($campaign->images->count() > 1)
+                    <div class="flex gap-3 overflow-x-auto">
+                        @foreach ($campaign->images as $image)
+                            <img src="{{ asset('storage/campaign/' . $image->image) }}" alt="{{ $campaign->title }} preview" class="h-20 w-20 flex-none rounded-xl object-cover ring-1 ring-ink/10">
+                        @endforeach
                     </div>
-                    <p
-                        class="flex items-center gap-2 px-2 py-1 text-sm font-medium tracking-widest text-indigo-400 rounded-md bg-black/70 w-fit">
-                        <span>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-                            </svg>
-                        </span>
-                        Ends in {{ $daysLeft }} {{ $daysLeft === 1 ? 'Day' : 'Days' }}
-                    </p>
-                    {{-- Check variations existence --}}
+                @endif
+            </div>
+
+            <div>
+                <p class="text-xs font-bold uppercase tracking-[0.25em] text-moss">{{ $campaign->user->name }} · community maker</p>
+                <h1 class="mt-3 font-display text-4xl font-semibold tracking-tight sm:text-6xl">{{ $campaign->title }}</h1>
+                <p class="mt-5 text-lg leading-8 text-ink/65">{{ $campaign->description }}</p>
+                <div class="mt-6 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wider text-ink/60">
+                    <span class="rounded-full bg-white px-3 py-2 ring-1 ring-ink/10">Ends {{ $campaign->end_date->format('d M Y') }}</span>
+                    <span class="rounded-full bg-white px-3 py-2 ring-1 ring-ink/10">{{ $campaign->orders->where('paid', true)->sum('quantity') }} backed</span>
+                </div>
+
+                <form wire:submit="preorder" class="mt-8 rounded-2xl bg-ink p-6 text-paper sm:p-8">
                     @if ($this->hasVariations($campaign->variations))
-                        @foreach (json_decode($campaign->variations, true) as $variation)
-                            <h2 class="mt-4 text-gray-700 capitalize">{{ $variation['name'] }}</h2>
-                            <div class="flex flex-wrap items-center gap-1 my-2 select-none">
-                                @foreach (explode(',', $variation['values']) as $value)
-                                    <div class="min-w-16">
-                                        <input type="radio"
-                                            :id="'{{ $variation['name'] }}_' + '{{ $value }}'"
-                                            value="{{ $value }}" class="hidden"
-                                            wire:model="selectedVariations.{{ $variation['name'] }}"
-                                            x-on:click="selectedVariations['{{ $variation['name'] }}'] = '{{ $value }}'" />
-                                        <label :for="'{{ $variation['name'] }}_' + '{{ $value }}'"
-                                            class="grid p-2 text-sm text-black uppercase transition border-2 rounded-md cursor-pointer place-items-center hover:scale-105"
-                                            :class="selectedVariations['{{ $variation['name'] }}'] == '{{ $value }}' ?
-                                                'border-indigo-600 text-indigo-600' :
-                                                'border-black'"
-                                            style="min-width: 4rem;">{{ $value }}</label>
+                        @foreach ($campaign->variations as $variation)
+                            @if ($variation['name'] || $variation['values'])
+                                <fieldset class="mb-6">
+                                    <legend class="text-sm font-semibold">{{ $variation['name'] }}</legend>
+                                    <div class="mt-3 flex flex-wrap gap-2">
+                                        @foreach (explode(',', $variation['values']) as $value)
+                                            <label class="cursor-pointer">
+                                                <input type="radio" wire:model="selectedVariations.{{ $variation['name'] }}" value="{{ trim($value) }}" class="peer sr-only">
+                                                <span class="inline-flex rounded-lg border border-paper/25 px-3 py-2 text-sm peer-checked:border-accent peer-checked:bg-accent">{{ trim($value) }}</span>
+                                            </label>
+                                        @endforeach
                                     </div>
-                                @endforeach
-                            </div>
-                            <x-input-error for="selectedVariations" />
+                                    <x-input-error for="selectedVariations" class="mt-2 text-red-300" />
+                                </fieldset>
+                            @endif
                         @endforeach
                     @endif
-                    <h2 class="mt-4 text-gray-900">Quantity</h2>
-                    <div class="flex flex-row gap-4 my-3">
-                        <div class="flex items-center justify-between px-4 rounded-md w-80 sm:w-auto md:px-0 ring-4 ring-gray-700"
-                            x-data="{
-                                quantity: @entangle('quantity'),
-                                minus() {
-                                    this.quantity = Math.max(1, parseInt(this.quantity) - 1);
-                                },
-                                plus() {
-                                    this.quantity = parseInt(this.quantity) + 1;
-                                }
-                            }">
-                            <svg x-on:click="minus()" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                class="m-3 text-gray-700 cursor-pointer w-7 h-7">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12h-15" />
-                            </svg>
-                            <input type="text" x-model="quantity"
-                                class="w-16 text-lg text-center bg-transparent border-none" />
-                            <svg x-on:click="plus()" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                class="m-3 text-gray-700 cursor-pointer w-7 h-7">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                            </svg>
-                        </div>
+                    <div class="flex items-end justify-between gap-4 border-t border-paper/15 pt-6">
+                        <div><p class="text-xs uppercase tracking-wider text-paper/55">Per item</p><p class="mt-1 font-display text-3xl font-semibold">RM {{ number_format($campaign->price / 100, 2) }}</p></div>
+                        <label class="text-right text-xs uppercase tracking-wider text-paper/55">Quantity<input wire:model="quantity" type="number" min="1" class="mt-2 block w-20 rounded-lg border-0 bg-paper px-3 py-2 text-center text-ink focus:ring-2 focus:ring-accent" aria-label="Quantity"></label>
                     </div>
-                    <div
-                        class="flex flex-col items-center justify-between py-4 mt-10 space-y-4 border-t border-b border-indigo-500 sm:flex-row sm:space-y-0">
-                        <div class="flex items-end">
-                            <h1 class="text-3xl font-bold">RM{{ number_format($campaign->price / 100, 2) }}</h1>
-                        </div>
-                        <x-button type="submit" class="w-full sm:w-64" target="preorder">
-                            Checkout
-                        </x-button>
-                    </div>
+                    <x-button type="submit" class="mt-6 w-full bg-accent hover:bg-paper hover:text-ink" target="preorder">Back this campaign</x-button>
                 </form>
-                <div class="lg:col-span-3" x-data="{ nav: 1 }">
-                    <div class="border-b border-indigo-400">
-                        <nav class="flex gap-4">
-                            <button x-transition x-on:click="nav = 1" :class="nav == 1 ? 'border-b-2' : ''"
-                                class="py-4 text-sm font-medium text-gray-900 border-indigo-500 hover:border-indigo-400 hover:text-gray-8s00">
-                                Description </button>
-                            <button x-transition x-on:click="nav = 2" :class="nav == 2 ? 'border-b-2' : ''"
-                                class="py-4 text-sm font-medium text-gray-900 border-indigo-500 hover:border-indigo-400 hover:text-gray-800">
-                                Details
-                            </button>
-                        </nav>
-                    </div>
-                    <div class="flow-root mt-8 sm:mt-8">
-                        <p x-cloak x-show="nav == 1" class="mt-4">{{ $campaign->description }}</p>
-                        <p x-cloak x-show="nav == 2" class="mt-4">{{ $campaign->details }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-20">
-                <p class="text-center">Follow our social media</p>
-                <div class="flex items-center justify-center gap-3 mt-2">
-                    @foreach ($this->links as $key => $url)
-                        @if ($url)
-                            <a href="{{ $url }}" target="_blank" class="inline-flex items-center gap-1">
-                                {!! config("icons.socials.$key") !!}
-                            </a>
-                        @endif
-                    @endforeach
-                </div>
-            </div>
-
-            <hr class="my-12 border-2 border-indigo-500" />
-            <div class="max-w-2xl mx-auto mt-8">
-
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-lg font-bold text-gray-900 lg:text-2xl">Questions
-                        ({{ $campaign->questions->count() }})</h2>
-                </div>
-                <form wire:submit.prevent="enquiry">
-                    @csrf
-                    <x-textarea class="w-full" rows="4" placeholder="Ask a question" wire:model="question" />
-                    <x-input-error for="question" />
-                    <button type="submit" wire:target="enquiry"
-                        class="w-1/4 px-6 py-2 mt-2 text-sm text-white transition bg-gray-800 rounded-md hover:bg-indigo-500">Submit</button>
-                </form>
-
-                @foreach ($campaign->questions as $question)
-                    <article class="px-6 py-4 mt-4 text-base rounded-lg bg-gray-700/10">
-                        <p class="text-sm text-indigo-700"> <span class="text-xs text-gray-900/80">Posted on</span>
-                            {{ $carbon::parse($question->created_at)->setTimeZone('Asia/Manila')->format('F d, g:i A') }}
-                        </p>
-                        <p class="mt-2 text-gray-900">{{ $question->question }}</p>
-                        @if ($question->reply)
-                            <div class="px-6 py-4 mt-2 rounded-lg bg-gray-700/20">
-                                <p class="text-sm text-indigo-700">
-                                    <span class="text-xs text-gray-900/90">Replied on</span>
-                                    {{ $carbon::parse($question->reply->created_at)->setTimeZone('Asia/Manila')->format('F d, g:i A') }}
-                                </p>
-                                <p class="mt-2 text-gray-900">{{ $question->reply->reply }}</p>
-                            </div>
-                        @endif
-                    </article>
-                @endforeach
             </div>
         </div>
+
+        <div class="mt-16 grid gap-10 border-t border-ink/10 pt-10 lg:grid-cols-[1fr_.8fr]">
+            <div class="space-y-10">
+                <div><p class="text-xs font-bold uppercase tracking-[0.25em] text-moss">The idea</p><p class="mt-3 text-lg leading-8 text-ink/70">{{ $campaign->details }}</p></div>
+                <div>
+                    <div class="flex items-center justify-between"><h2 class="font-display text-2xl font-semibold">Questions</h2><span class="text-sm text-ink/50">{{ $campaign->questions->count() }}</span></div>
+                    <form wire:submit="enquiry" class="mt-4 flex gap-2"><x-textarea wire:model="question" rows="2" placeholder="Ask the maker something" class="min-w-0 flex-1" /><button class="rounded-xl bg-ink px-4 py-2 text-sm font-semibold text-paper hover:bg-accent">Ask</button></form>
+                    <x-input-error for="question" class="mt-2" />
+                    <div class="mt-5 space-y-3">
+                        @forelse ($campaign->questions as $question)
+                            <article class="rounded-2xl bg-white p-5 ring-1 ring-ink/10"><p class="text-xs font-semibold uppercase tracking-wider text-moss">Question</p><p class="mt-2">{{ $question->question }}</p>@if ($question->reply)<p class="mt-3 border-l-2 border-accent pl-3 text-sm text-ink/60">{{ $question->reply->reply }}</p>@endif</article>
+                        @empty
+                            <p class="text-sm text-ink/50">Be the first to ask a question.</p>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+            <aside class="rounded-2xl bg-moss p-6 text-paper sm:p-8"><p class="text-xs font-bold uppercase tracking-[0.25em] text-paper/60">How it works</p><ol class="mt-6 space-y-5 text-sm leading-6"><li><span class="mr-2 text-accent">01</span> Choose a variation and quantity.</li><li><span class="mr-2 text-accent">02</span> Complete the simulated checkout.</li><li><span class="mr-2 text-accent">03</span> The maker uses your support to produce the next batch.</li></ol></aside>
+        </div>
     </section>
-    <x-flash />
 </div>

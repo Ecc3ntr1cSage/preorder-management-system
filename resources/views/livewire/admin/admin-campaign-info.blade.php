@@ -50,13 +50,13 @@
                 <div>
                     <p>Shipping</p>
                     <div class="flex items-center gap-2">
-                        @foreach (json_decode($campaign->shipping, true) as $key => $shipping)
+                        @foreach (($campaign->shipping ?? []) as $key => $shipping)
                             <p class="px-2 py-1 my-1 capitalize rounded-md bg-black/40">{{ $key }}:
                                 {{ $shipping }}</p>
                         @endforeach
                     </div>
                     <p>Variations</p>
-                    @foreach (json_decode($campaign->variations, true) as $key => $variation)
+                    @foreach (($campaign->variations ?? []) as $key => $variation)
                         <p class="px-2 py-1 my-1 capitalize rounded-md bg-black/40">{{ $variation['name'] }}:
                             {{ $variation['values'] }}</p>
                     @endforeach

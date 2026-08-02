@@ -1,43 +1,11 @@
-@inject('carbon', 'Carbon\Carbon')
-<section class="min-h-screen p-6 mx-auto max-w-7xl">
-    <div>
-
+    <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-10 lg:py-16">
+        <div class="flex flex-col justify-between gap-6 border-b border-ink/15 pb-8 sm:flex-row sm:items-end"><div><p class="text-xs font-bold uppercase tracking-[0.28em] text-moss">Open campaigns</p><h1 class="mt-2 font-display text-5xl font-semibold tracking-tight sm:text-6xl">Find something worth backing.</h1></div><input wire:model.live.debounce.300ms="search" type="search" placeholder="Search campaigns" class="w-full rounded-xl border-0 bg-white px-4 py-3 text-sm shadow-sm ring-1 ring-ink/10 focus:ring-2 focus:ring-accent sm:w-64"></div>
+        <div class="mt-10 grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+            @forelse ($campaigns as $campaign)
+                <a href="{{ route('customer.show', $campaign) }}" wire:navigate class="group block"><div class="relative aspect-[4/5] overflow-hidden rounded-[1.5rem] bg-ink"><img src="{{ $campaign->images->first() ? asset('storage/campaign/' . $campaign->images->first()->image) : asset('asset/checkout2.webp') }}" alt="{{ $campaign->title }} campaign" class="h-full w-full object-cover opacity-85 transition duration-500 group-hover:scale-105 group-hover:opacity-100"><span class="absolute left-4 top-4 rounded-md bg-paper px-2 py-1 text-xs font-bold uppercase tracking-wider text-ink">{{ $campaign->end_date->isFuture() ? 'Open' : 'Ended' }}</span><span class="absolute bottom-4 right-4 rounded-full bg-accent px-3 py-2 text-xs font-bold text-white">RM {{ number_format($campaign->price / 100, 2) }}</span></div><div class="mt-4 flex items-start justify-between gap-4"><div><h2 class="font-display text-xl font-semibold group-hover:text-accent">{{ $campaign->title }}</h2><p class="mt-1 line-clamp-2 text-sm leading-6 text-ink/55">{{ $campaign->description }}</p></div><span class="text-xl transition-transform group-hover:translate-x-1 group-hover:text-accent">↗</span></div><p class="mt-3 text-xs font-semibold uppercase tracking-wider text-moss">by {{ $campaign->user->name }}</p></a>
+            @empty
+                <div class="rounded-2xl bg-white p-8 text-ink/60 sm:col-span-2 lg:col-span-3">No live campaigns match that search.</div>
+            @endforelse
+        </div>
+        <div class="mt-12">{{ $campaigns->links() }}</div>
     </div>
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-3 md:grid-cols-2">
-        @foreach ($campaigns as $campaign)
-            @php
-                $endDate = $carbon::parse($campaign->end_date);
-                $today = $carbon::today();
-                $daysLeft = $endDate->diffInDays($today);
-            @endphp
-            <a href="{{ route('customer.show', $campaign->slug) }}" wire:navigate
-                class="relative block bg-black h-96 group">
-                <img alt="Campaign" src="{{ asset('storage/campaign/' . $campaign->images->first()->image) }}"
-                    class="absolute inset-0 object-cover w-full h-full transition-opacity opacity-75 group-hover:opacity-50" />
-                <p
-                    class="absolute top-0 right-0 px-2 py-1 text-xs tracking-wide uppercase rounded-bl-lg text-rose-400 bg-black/70">
-                    {{ $daysLeft }} {{ $daysLeft === 1 ? 'day' : 'days' }} left</p>
-                <div class="relative p-4 sm:p-6 lg:p-8">
-                    <p
-                        class="px-2 py-1 text-sm font-medium tracking-wider text-indigo-400 uppercase rounded-md bg-black/70 w-fit">
-                        {{ $carbon::parse($campaign->start_date)->format('d F Y') }} -
-                        {{ $carbon::parse($campaign->end_date)->format('d F Y') }}
-                    </p>
-                    <p class="px-2 py-1 mt-2 text-xl font-bold text-white capitalize rounded-md bg-black/70 w-fit">
-                        {{ $campaign->title }}</p>
-                    <div class="mt-12 sm:mt-20 lg:mt-40">
-                        <div
-                            class="transition-all transform translate-y-8 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
-                            <p class="text-sm text-white truncate">
-                                {{ $campaign->description }}
-                            </p>
-                            <p class="px-2 py-1 mt-2 text-sm bg-green-500 rounded-md w-fit">
-                                RM {{ number_format($campaign->price / 100, 2) }}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </a>
-        @endforeach
-    </div>
-</section>

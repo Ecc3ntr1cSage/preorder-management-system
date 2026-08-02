@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center gap-4">
-            @can('customer-nav')
+            @if (! auth()->user()->is_admin)
                 <a href="{{ route('customer.shop') }}" wire:navigate
                     class="p-1 transition-all rounded-full hover:bg-zinc-600/60 hover:-translate-x-1">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -9,7 +9,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                     </svg>
                 </a>
-            @endcan
+            @endif
             {{ __('Profile Settings') }}
         </div>
 
@@ -34,11 +34,11 @@
                 @livewire('profile.update-password-form')
                 <x-section-border />
             @endif
-            @can('business-nav')
+            @if (! auth()->user()->is_admin)
                 <div id="social" class="mb-6"></div>
                 @livewire('profile.update-social-links')
                 <x-section-border />
-            @endcan
+            @endif
             @if (Laravel\Fortify\Features::canManageTwoFactorAuthentication())
                 <div id="2fa" class="mb-6"></div>
                 @livewire('profile.two-factor-authentication-form')

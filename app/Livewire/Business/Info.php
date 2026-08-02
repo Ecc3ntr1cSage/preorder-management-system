@@ -8,7 +8,6 @@ use App\Models\Coupon;
 use App\Models\Image;
 use App\Models\Question;
 use App\Models\Reply;
-use Intervention\Image\Facades\Image as InterventionImage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -75,6 +74,7 @@ class Info extends Component
 
     public function mount()
     {
+        abort_unless($this->campaign->user_id === Auth::id(), 403);
         $this->title = $this->campaign->title;
         $this->description = $this->campaign->description;
         $this->details = $this->campaign->details;
@@ -82,8 +82,8 @@ class Info extends Component
         $this->price = $this->currency . ' ' . number_format($this->campaign->price / 100, 2);
         $this->startDate = Carbon::parse($this->campaign->start_date)->format('Y-m-d');
         $this->endDate = Carbon::parse($this->campaign->end_date)->format('Y-m-d');
-        $this->variations = json_decode($this->campaign->variations, true);
-        $this->shipping = json_decode($this->campaign->shipping, true);
+        $this->variations = $this->campaign->variations ?? [];
+        $this->shipping = $this->campaign->shipping ?? [];
     }
 
     public function generateCode()
@@ -147,12 +147,8 @@ class Info extends Component
     public function uploadImage()
     {
         if ($this->image) {
-            $asset = InterventionImage::make($this->image);
-            $asset->orientate();
-            $asset->encode('webp', 90);
-            $extension = 'webp';
-            $filename = $this->campaign->id . '-' . Str::random(8) . '-' . Auth::user()->name . '.' . $extension;
-            Storage::disk('public')->put('campaign/' . $filename, $asset->stream());
+            $filename = $this->campaign->id . '-' . Str::random(8) . '-' . Str::slug(Auth::user()->name) . '.' . $this->image->getClientOriginalExtension();
+            Storage::disk('public')->putFileAs('campaign', $this->image, $filename);
 
             Image::create([
                 'campaign_id' => $this->campaign->id,
@@ -168,11 +164,7 @@ class Info extends Component
     {
         $image = Image::findOrFail($image_id);
 
-        $path = 'public/campaign/' . $image->image;
-
-        if (Storage::exists($path)) {
-            Storage::delete($path);
-        }
+        Storage::disk('public')->delete('campaign/' . $image->image);
 
         $image->delete();
         $this->campaign = Campaign::find($this->campaign->id);

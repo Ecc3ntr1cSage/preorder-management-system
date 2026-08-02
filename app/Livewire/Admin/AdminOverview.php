@@ -16,7 +16,7 @@ class AdminOverview extends Component
 
     public function render()
     {
-        $users = User::where('role_id', 2)->paginate($this->perPage);
+        $users = User::where('is_admin', false)->latest()->paginate($this->perPage);
         
         return view('livewire.admin.admin-overview', compact('users'));
     }

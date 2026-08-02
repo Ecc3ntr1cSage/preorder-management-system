@@ -126,13 +126,13 @@
                         {{ $campaign->slug }}
                     </td>
                     <td class="px-3 py-4 whitespace-nowrap">
-                        @foreach (json_decode($campaign->variations, true) as $variation)
+                        @foreach (($campaign->variations ?? []) as $variation)
                             <p>{{ $variation['name'] }}: {{ $variation['values'] }}</p>
                         @endforeach
                     </td>
                     <td class="px-3 py-4 whitespace-nowrap">
-                        @if (!empty(array_filter(json_decode($campaign->shipping, true))))
-                            @foreach (json_decode($campaign->shipping, true) as $shipping)
+                        @if (!empty(array_filter($campaign->shipping ?? [])))
+                            @foreach (($campaign->shipping ?? []) as $shipping)
                                 ({{ $shipping }})
                             @endforeach
                         @else

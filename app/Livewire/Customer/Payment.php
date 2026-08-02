@@ -4,15 +4,12 @@ namespace App\Livewire\Customer;
 
 use Carbon\Carbon;
 use App\Models\Campaign;
-use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Rule;
 use Livewire\Component;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class Payment extends Component
 {
@@ -37,10 +34,6 @@ class Payment extends Component
     #[Rule('required', message: 'Please select a state.')]
     public $state;
 
-    #[Rule('required', message: 'Please select payment options.')]
-    public $bankCode;
-
-    #[Rule('required', message: 'Can\'t be empty.')]
     public $couponCode;
 
     #[Locked]
@@ -87,7 +80,7 @@ class Payment extends Component
 
         $coupon = $this->campaign->coupon;
 
-        if (strcasecmp($this->couponCode, $coupon->code) !== 0) {
+        if (!$coupon || strcasecmp($this->couponCode, $coupon->code) !== 0) {
             $this->dispatch('error', message: 'Invalid Coupon');
             return;
         }
@@ -123,16 +116,23 @@ class Payment extends Component
     private function calculate()
     {
         $subtotal = $this->campaign->price * $this->preorder['quantity'];
-        $total = $subtotal + $this->shipping * 100 - ($this->discount * 100);
+        $shipping = (float) ($this->shipping ?: 0) * 100;
+        $discount = round($subtotal * ((float) $this->discount / 100));
+        $total = $subtotal + $shipping - $discount;
 
         return [
             'subtotal' => $subtotal,
+            'discount' => $discount,
             'total' => $total,
         ];
     }
 
     public function payment()
     {
+        if (!session()->has('preorder')) {
+            return $this->redirectRoute('customer.shop', navigate: true);
+        }
+
         $this->validate([
             'email' => 'required|email',
             'name' => 'required',
@@ -140,74 +140,55 @@ class Payment extends Component
             'address' => 'required',
             'postcode' => 'required',
             'state' => 'required',
-            'bankCode' => 'required',
         ]);
-        // Fetch shipping value
-        $this->calculateShipping($this->state);
-        // Initialize amount value
-        $amount = round($this->calculate()['total']);
-        // Post to billplz
-        try {
-            DB::beginTransaction();
 
-            $order = Order::create([
-                'collection_id' => env('BILLPLZ_COLLECTION'),
+        $this->calculateShipping($this->state);
+        $calculations = $this->calculate();
+
+        $order = DB::transaction(function () use ($calculations) {
+            $order = $this->campaign->orders()->create([
                 'campaign_id'   => $this->preorder['campaign_id'],
+                'collection_id' => 'demo',
                 'user_id'       => auth()->id(),
                 'email'         => $this->email,
                 'name'          => $this->name,
                 'phone'         => $this->phone,
-                'status'        => 0,
-                'amount'        => $amount,
-                'discount'      => $this->discount * 100,
+                'status'        => 1,
+                'amount'        => $calculations['total'],
+                'discount'      => $calculations['discount'],
                 'quantity'      => $this->preorder['quantity'],
                 'fee'           => $this->campaign->fee * $this->preorder['quantity'],
-                'shipping'      => $this->shipping * 100,
+                'shipping'      => (float) ($this->shipping ?: 0) * 100,
                 'variations'    => $this->preorder['variations'],
-                'paid'          => false,
+                'paid'          => true,
+                'paid_at'       => now(),
                 'address'       => $this->address,
                 'postcode'      => $this->postcode,
                 'state'         => $this->state,
             ]);
 
-            $billplzPayload = [
-                'collection_id'     => env('BILLPLZ_COLLECTION'),
-                'email'             => $this->email,
-                'name'              => $this->name,
-                'mobile'            => $this->phone,
-                'description'       => $this->campaign->title,
-                'amount'            => $amount,
-                'reference_1_label' => "Bank Code",
-                'reference_1'       => $this->bankCode,
-                'callback_url'      => route('billplz-callback'),
-                'redirect_url'      => route('billplz-redirect', $order->uuid),
-            ];
-
-            $response = Http::withBasicAuth(env('BILLPLZ_KEY'), env('BILLPLZ_SIGNATURE'))
-                ->post('https://www.billplz-sandbox.com/api/v3/bills', $billplzPayload);
-
-            if (!$response->successful()) {
-                Log::error('Billplz error: ' . $response->body());
-                throw new \Exception('Payment gateway error');
+            if ($this->discount > 0) {
+                $this->campaign->coupon?->increment('usage');
             }
 
-            $order->update(['billplz_id' => $response->json('id')]);
+            $wallet = $this->campaign->user->wallet()->firstOrCreate([], ['earning' => 0, 'balance' => 0]);
+            $credit = $order->amount - $order->fee;
+            $wallet->increment('earning', $credit);
+            $wallet->increment('balance', $credit);
 
-            DB::commit();
+            return $order;
+        });
 
-            return redirect("https://www.billplz-sandbox.com/bills/{$response->json('id')}?auto_submit=true");
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            Log::error('Payment failed: ' . $e->getMessage());
-            abort(500, 'Something went wrong during payment.');
-        }
+        session()->forget('preorder');
+
+        return $this->redirectRoute('customer.invoice', $order, navigate: true);
     }
 
     #[Layout('layouts.guest')]
     public function render()
     {
         $this->campaign = Campaign::findOrFail($this->preorder['campaign_id']);
-        $this->shippingArray = json_decode($this->campaign->shipping, true);
+        $this->shippingArray = $this->campaign->shipping ?? [];
         $calculations = $this->calculate();
 
         return view('livewire.customer.payment', compact('calculations'));

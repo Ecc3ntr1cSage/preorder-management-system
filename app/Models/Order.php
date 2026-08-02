@@ -33,9 +33,14 @@ class Order extends Model
         'tracking_number'
     ];
 
+    protected $casts = [
+        'paid' => 'boolean',
+        'paid_at' => 'datetime',
+    ];
+
     public function getRouteKeyName()
     {
-        return 'billplz_id';
+        return 'id';
     }
 
     public function campaign()

@@ -43,24 +43,10 @@
                             <x-input-error for="state" />
                         </div>
                     </div>
-                    <x-label value="{{ __('FPX Payment') }}" class="mt-8" />
-                    <div class="grid w-full grid-cols-3 gap-3" x-data="{ radio: '' }">
-                        @foreach (config('banks.banks') as $bankCode => $bank)
-                            <div>
-                                <input class="hidden" id="{{ $bankCode }}" type="radio" wire:model="bankCode"
-                                    value="{{ $bankCode }}" x-on:click="radio = '{{ $bankCode }}'"
-                                    x-model="radio">
-                                <label
-                                    class="flex flex-col p-4 transition bg-transparent border-2 rounded-md cursor-pointer"
-                                    :class="radio == '{{ $bankCode }}' ? 'border-indigo-500' :
-                                        'border-gray-400'"
-                                    for="{{ $bankCode }}">
-                                    <img src="{{ $bank['image'] }}" class="h-4 md:h-8" />
-                                </label>
-                            </div>
-                        @endforeach
+                    <div class="mt-8 rounded-xl border border-ink/10 bg-ink/5 p-4">
+                        <p class="text-sm font-semibold text-ink">Demo payment</p>
+                        <p class="mt-1 text-sm text-ink/60">Checkout is simulated locally. No bank details or external gateway are used.</p>
                     </div>
-                    <x-input-error for="bankCode" />
                     <p class="mt-10 text-sm font-semibold text-center text-gray-500">By placing this order you agree to
                         the
                         <a href="#" class="text-teal-400 underline whitespace-nowrap hover:text-teal-600">Terms
@@ -100,7 +86,7 @@
                             @if (empty(array_filter($this->shippingArray)))
                                 Free Shipping
                             @else
-                                RM {{ number_format($this->shipping, 2) }}
+                                RM {{ number_format((float) $this->shipping, 2) }}
                             @endif
                         </span>
                     </p>
@@ -108,7 +94,7 @@
                         <p class="flex justify-between text-sm font-medium">
                             <span>Discount</span>
                             <span>
-                                - RM {{ number_format($this->discount, 2) }}
+                            - RM {{ number_format($calculations['discount'] / 100, 2) }}
                             </span>
                         </p>
                     @endif

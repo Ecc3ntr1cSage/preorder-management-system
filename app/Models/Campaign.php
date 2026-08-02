@@ -29,6 +29,9 @@ class Campaign extends Model
 
     protected $casts = [
         'variations' => 'array',
+        'shipping' => 'array',
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
     ];
     // Relationships
     public function user()

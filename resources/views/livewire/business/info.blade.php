@@ -22,7 +22,7 @@
         @endforeach
         @if (count($campaign->images) < 5)
             <div>
-                <x-filepond wire:model="image" />
+                <input type="file" wire:model="image" accept="image/*" class="block w-full text-sm file:mr-4 file:rounded-full file:border-0 file:bg-ink file:px-4 file:py-2 file:font-semibold file:text-white hover:file:bg-accent" />
                 <button type="button" wire:click="uploadImage" wire:target="uploadImage"
                     class="flex items-center justify-center w-full h-10 px-6 py-2 text-sm text-white transition bg-gray-800 rounded-md hover:bg-indigo-500">
                     <span wire:loading.remove wire:target="uploadImage">Upload</span>

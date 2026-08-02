@@ -27,10 +27,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role_id',
+        'is_admin',
         'links',
         'phone',
-        'google_id',
         'email_verified_at'
     ];
 
@@ -53,6 +52,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'is_admin' => 'boolean',
     ];
 
     /**
@@ -64,8 +64,13 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
-    public function campaign(){
+    public function campaigns(){
         return $this->hasMany(Campaign::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
     }
 
     public function wallet(){

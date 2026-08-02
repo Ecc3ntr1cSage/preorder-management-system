@@ -15,7 +15,7 @@
             <div class="text-end">
                 <h2 class="text-2xl font-semibold md:text-3xl dark:text-gray-200">Invoice #
                 </h2>
-                <span class="block mt-1 text-gray-400">{{ $order->billplz_id }}</span>
+                <span class="block mt-1 text-gray-400">PS-{{ str_pad($order->id, 6, '0', STR_PAD_LEFT) }}</span>
             </div>
         </div>
         <div class="grid gap-3 mt-8 sm:grid-cols-2">

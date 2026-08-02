@@ -1,78 +1,24 @@
 <x-guest-layout>
     <x-authentication-card>
         <x-slot name="logo">
-            <div class="flex items-center gap-4">
-                <hr class="h-1 mx-auto my-4 border-0 rounded w-36 bg-gradient-to-r from-blue-500 to-indigo-500">
-                <a href="/" wire:navigate>
-                    <img src="{{ asset('asset/preorder.png') }}" alt="" class="w-14 h-14" />
-                </a>
-                <hr class="h-1 mx-auto my-4 border-0 rounded w-36 bg-gradient-to-r from-indigo-500 to-fuchsia-500">
-            </div>
-            <p>Preorder Management System</p>
-            <p class="mt-4 text-2xl font-bold tracking-widest text-gray-800 uppercase">Login</p>
-            <p class="text-gray-700">Welcome back.</p>
+            <p class="font-display text-2xl font-semibold">pre<span class="text-accent">.</span>shop</p>
+            <p class="mt-3 text-2xl font-semibold text-ink">Welcome back</p>
+            <p class="mt-1 text-sm text-ink/60">Sign in to manage your campaigns and orders.</p>
         </x-slot>
 
         @if (session('status'))
-            <div class="mb-4 text-sm font-medium text-green-600">
-                {{ session('status') }}
-            </div>
+            <div class="mb-4 text-sm font-medium text-green-600">{{ session('status') }}</div>
         @endif
-
-        {{-- <div class="flex flex-col items-center space-y-4">
-            <a href="{{ route('google.redirect') }}"
-                class="flex items-center justify-center w-full gap-2 p-2 transition-all duration-300 ease-out border-2 border-gray-800 rounded-md hover:bg-gray-800 hover:text-gray-200 hover:ring-2 hover:ring-offset-2 hover:ring-gray-800">
-                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" class="w-6 h-6" viewBox="0 0 48 48">
-                    <path fill="#FFC107"
-                        d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z">
-                    </path>
-                    <path fill="#FF3D00"
-                        d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z">
-                    </path>
-                    <path fill="#4CAF50"
-                        d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z">
-                    </path>
-                    <path fill="#1976D2"
-                        d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z">
-                    </path>
-                </svg>
-                Login with Google
-            </a>
-            <p>OR</p>
-        </div> --}}
-
         <x-validation-errors class="mb-4" />
-
-        <form method="POST" action="{{ route('login') }}">
+        <form method="POST" action="{{ route('login') }}" class="space-y-4">
             @csrf
-            <div>
-                <x-label for="email" value="{{ __('Email') }}" />
-                <x-input id="email" class="block w-full mt-1" type="email" name="email" :value="old('email')"
-                    autofocus autocomplete="username" />
-            </div>
-            <div class="mt-4">
-                <x-label for="password" value="{{ __('Password') }}" />
-                <x-input id="password" class="block w-full mt-1" type="password" name="password"
-                    autocomplete="current-password" />
-            </div>
-            <x-button type="submit" class="w-full mt-4">
-                {{ __('Log in') }}
-            </x-button>
-
+            <div><x-label for="email" value="{{ __('Email') }}" /><x-input id="email" class="mt-1 block w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" /></div>
+            <div><x-label for="password" value="{{ __('Password') }}" /><x-input id="password" class="mt-1 block w-full" type="password" name="password" required autocomplete="current-password" /></div>
+            <x-button type="submit" class="w-full">{{ __('Log in') }}</x-button>
         </form>
-        <div class="mt-4">
-            @if (Route::has('password.request'))
-                <a class="text-sm text-gray-600 underline rounded-md hover:text-gray-900"
-                    href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-            <p class="text-sm text-gray-700">Don't have an account?
-                <span>
-                    <a wire:navigate href="{{ route('register') }}"
-                        class="text-gray-600 underline hover:text-indigo-600">Click here</a>
-                </span>
-            </p>
+        <div class="mt-5 flex justify-between text-sm text-ink/60">
+            @if (Route::has('password.request'))<a href="{{ route('password.request') }}" class="underline hover:text-accent">Forgot password?</a>@endif
+            <a wire:navigate href="{{ route('register') }}" class="underline hover:text-accent">Join the community</a>
         </div>
     </x-authentication-card>
 </x-guest-layout>

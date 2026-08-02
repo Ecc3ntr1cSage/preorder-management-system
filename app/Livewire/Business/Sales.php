@@ -4,9 +4,7 @@ namespace App\Livewire\Business;
 
 use App\Models\Campaign;
 use App\Models\Order;
-use App\Exports\ExportSales;
 use Illuminate\Support\Facades\Auth;
-use Maatwebsite\Excel\Facades\Excel;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -37,16 +35,6 @@ class Sales extends Component
     {
         $this->column = $column;
         $this->direction = $direction;
-    }
-
-    public function export($campaign_id){
-        $orders = Order::select('email','name','phone','quantity','amount','shipping','variations','address','postcode','state','paid_at')
-            ->where('campaign_id', $campaign_id)
-            ->get();
-        $campaign = Campaign::findOrFail($campaign_id);
-        $filename = str_replace(' ', '_', $campaign->title) . '.xlsx';
-
-        return Excel::download(new ExportSales($orders), $filename);
     }
 
     public function render()

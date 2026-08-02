@@ -36,29 +36,6 @@
             <option value="">Max</option>
         </select>
         <x-input class="w-48 text-xs" placeholder="Search email or name" wire:model.lazy="search" type="text" />
-        <x-dropdown align="left">
-            <x-slot name="trigger">
-                <button
-                    class="px-2 py-1.5 my-2 text-indigo-400 bg-gray-800 rounded-md hover:bg-gray-900 focus:border-violet-500 focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="w-5 h-5">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                    </svg>
-                </button>
-            </x-slot>
-            <x-slot name="content">
-                <ul class="m-1 text-xs">
-                    <p class="px-4 py-2 text-xs text-gray-400">Export to Excel</p>
-                    @foreach ($campaigns as $campaign)
-                        <button type="button" class="w-full px-4 py-2 text-left rounded-md hover:bg-indigo-500/80"
-                            wire:click="export({{ $campaign->id }})">
-                            {{ $campaign->title }}
-                        </button>
-                    @endforeach
-                </ul>
-            </x-slot>
-        </x-dropdown>
         <button class="ml-2 text-xs text-gray-600 underline transition hover:text-indigo-700"
             wire:click="clearFilter">Clear Filter</button>
     </div>

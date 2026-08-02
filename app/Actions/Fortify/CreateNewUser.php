@@ -3,7 +3,6 @@
 namespace App\Actions\Fortify;
 
 use App\Models\User;
-use App\Models\Wallet;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
@@ -24,7 +23,6 @@ class CreateNewUser implements CreatesNewUsers
             'name' => ['required', 'string', 'max:255', 'unique:users,name', 'not_regex:/\'/'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => $this->passwordRules(),
-            'role_id' => ['required'],
             'terms' => Jetstream::hasTermsAndPrivacyPolicyFeature() ? ['accepted', 'required'] : '',
         ])->validate();
 
@@ -32,17 +30,11 @@ class CreateNewUser implements CreatesNewUsers
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => Hash::make($input['password']),
-            'role_id' => $input['role_id'],
+            'is_admin' => false,
             'email_verified_at' => now(),
         ]);
 
-        if ($user->role_id == 2) {
-            Wallet::create([
-                'user_id' => $user->id,
-                'earning' => 0,
-                'balance' => 0,
-            ]);
-        }
+        $user->wallet()->create(['earning' => 0, 'balance' => 0]);
 
         return $user;
     }

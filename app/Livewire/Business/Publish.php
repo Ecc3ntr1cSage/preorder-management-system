@@ -4,7 +4,6 @@ namespace App\Livewire\Business;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-use Intervention\Image\Facades\Image as InterventionImage;
 use App\Models\Campaign;
 use App\Models\Image;
 use Illuminate\Support\Facades\Log;
@@ -18,11 +17,7 @@ class Publish extends Component
 {
     use WithFileUploads;
 
-    // #[Rule(['image.*' => 'image|max:1024'],
-    //     message: [
-    //         'image' => 'File must be an image',
-    //         'max:1024' => 'File is too big'
-    //     ])]
+    #[Rule('array')]
     public $image = [];
 
     #[Rule('required', message: 'Please provide a title.')]
@@ -65,7 +60,10 @@ class Publish extends Component
 
     public function campaign()
     {
-        $this->validate();
+        $this->validate([
+            'image' => ['array', 'max:5'],
+            'image.*' => ['image', 'max:4096'],
+        ]);
 
         try {
             $price = round($this->price * 100 * 1.03);
@@ -86,7 +84,7 @@ class Publish extends Component
 
             $this->uploadImages($campaign);
             session()->flash('message', 'New Campaign Created');
-            return $this->redirect('campaigns', navigate: true);
+            return $this->redirectRoute('business.manage', navigate: true);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return redirect()->back();
@@ -96,12 +94,8 @@ class Publish extends Component
     private function uploadImages($campaign)
     {
         foreach ($this->image as $file) {
-            $asset = InterventionImage::make($file);
-            $asset->orientate();
-            $asset->encode('webp', 90);
-            $extension = 'webp';
-            $filename = $campaign->id . '-' . Str::random(8) . '-' . Auth::user()->name . '.' . $extension;
-            Storage::disk('public')->put('campaign/' . $filename, $asset->stream());
+            $filename = $campaign->id . '-' . Str::random(8) . '-' . Str::slug(Auth::user()->name) . '.' . $file->getClientOriginalExtension();
+            Storage::disk('public')->putFileAs('campaign', $file, $filename);
 
             Image::create([
                 'campaign_id' => $campaign->id,

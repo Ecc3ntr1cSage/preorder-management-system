@@ -19,7 +19,6 @@ class JetstreamServiceProvider extends ServiceProvider
         $this->registerComponent('admin-panel');
         $this->registerComponent('admin-table');
         $this->registerComponent('flash');
-        $this->registerComponent('filepond');
         $this->registerComponent('glowing-card');
         $this->registerComponent('gradient-card');
         $this->registerComponent('textarea');

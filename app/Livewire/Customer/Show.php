@@ -29,15 +29,11 @@ class Show extends Component
         $sessionId = session()->getId();
         $user = auth()->user();
 
-        if ($user && $user->role_id != 3) {
-            return;
-        }
-
         $visitor = Visitor::where('session_id', $sessionId)
             ->where('campaign_id', $this->campaign->id)
             ->first();
 
-        if (!$visitor) {
+        if (!$visitor && $user) {
             Visitor::create([
                 'session_id'   => $sessionId,
                 'user_id'      => $user?->id,
@@ -74,7 +70,7 @@ class Show extends Component
 
     public function hasVariations($variations)
     {
-        $variations = json_decode($variations, true);
+        $variations = is_string($variations) ? json_decode($variations, true) : $variations;
         foreach ($variations as $variation) {
             if (!empty($variation['name']) || !empty($variation['values'])) {
                 return true; // At least one variation contains values
