@@ -35,6 +35,7 @@ All demo accounts use the password `password`.
 | Community maker | `irfan@preshop.test` |
 | Community member | `nadia@preshop.test` |
 | Community member | `daniel@preshop.test` |
+| Community member | `sofia@preshop.test` |
 
 ## Demo journeys
 

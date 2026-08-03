@@ -71,11 +71,23 @@ class MarketplaceTest extends TestCase
         Artisan::call('db:seed');
 
         $this->assertDatabaseHas('users', ['email' => 'admin@preshop.test', 'is_admin' => 1]);
-        $this->assertDatabaseCount('users', 5);
-        $this->assertDatabaseCount('campaigns', 5);
-        $this->assertDatabaseCount('images', 5);
-        $this->assertDatabaseCount('orders', 5);
-        $this->assertDatabaseCount('visitors', 5);
+        $this->assertDatabaseCount('users', 6);
+        $this->assertDatabaseCount('campaigns', 8);
+        $this->assertGreaterThanOrEqual(16, \App\Models\Image::count());
+        $this->assertLessThanOrEqual(32, \App\Models\Image::count());
+        $this->assertDatabaseCount('orders', 14);
+        $this->assertDatabaseCount('visitors', 8);
+        $this->assertDatabaseCount('wallets', 5);
+        $this->assertSame(3, Campaign::where('status', 1)->count());
+        $this->assertSame(5, Campaign::where('status', 2)->count());
+
+        foreach (['maya@preshop.test', 'irfan@preshop.test', 'nadia@preshop.test', 'daniel@preshop.test', 'sofia@preshop.test'] as $email) {
+            $this->assertSame(1, Campaign::where('user_id', User::where('email', $email)->value('id'))->where('status', 2)->count());
+        }
+
+        foreach (['maya@preshop.test' => 3, 'irfan@preshop.test' => 2, 'nadia@preshop.test' => 3, 'daniel@preshop.test' => 3, 'sofia@preshop.test' => 3] as $email => $count) {
+            $this->assertSame($count, User::where('email', $email)->first()->orders()->count());
+        }
     }
 
     private function campaign(User $owner): Campaign

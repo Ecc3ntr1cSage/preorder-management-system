@@ -1,70 +1,133 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";
+
 @source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
 @source "../../vendor/laravel/jetstream/**/*.blade.php";
 @source "../views/**/*.blade.php";
 @source "../js/**/*.js";
 
 @theme {
-    --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
-    --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
-    --color-ink: #171a1c;
-    --color-paper: #f3f0e8;
-    --color-accent: #e86f51;
-    --color-accent-dark: #b84b35;
-    --color-moss: #69735b;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "DM Serif Display", ui-serif, Georgia, serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+
+  --color-ink: #050505;
+  --color-paper: #f3f0e8;
+  --color-accent: #e86f51;
+  --color-accent-dark: #b84b35;
+  --color-moss: #69735b;
+  --color-gold: #d4af37;
+  --color-deep-gold: #8c6a00;
+  --color-deep-purple: #2e1a47;
+
+  --radius-xl: 1.25rem;
+  --radius-2xl: 2rem;
+  --radius-3xl: 3rem;
+  --radius-full: 6.25rem;
+
+  --transition-elastic: cubic-bezier(0.32, 0.72, 0, 1);
+  --transition-elastic-soft: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-bounce-in: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-bounce-out: cubic-bezier(0.8, 0, 0.2, 1);
 }
 
-[x-cloak] {
+@layer base {
+  [x-cloak] {
     display: none;
-}
+  }
 
-html {
+  html {
     scroll-behavior: smooth;
     overflow-x: hidden;
-}
+  }
 
-body {
+  body {
     background: var(--color-paper);
     color: var(--color-ink);
     font-family: var(--font-sans);
     text-wrap: pretty;
-}
+  }
 
-h1, h2, h3, h4 {
+  h1, h2, h3, h4 {
     font-family: var(--font-display);
     text-wrap: balance;
-}
+  }
 
-a, button, input, select, textarea {
-    transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease,
-        box-shadow 180ms ease, transform 180ms ease;
-}
+  a, button, input, select, textarea {
+    transition: color 180ms var(--transition-elastic),
+      background-color 180ms var(--transition-elastic),
+      border-color 180ms var(--transition-elastic),
+      box-shadow 180ms var(--transition-elastic),
+      transform 180ms var(--transition-elastic);
+  }
 
-a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  a:focus-visible, button:focus-visible, input:focus-visible,
+  select:focus-visible, textarea:focus-visible {
     outline: 3px solid color-mix(in srgb, var(--color-accent) 65%, white);
     outline-offset: 3px;
+  }
+
+  .surface-shadow {
+    box-shadow: 12px 14px 0 color-mix(in srgb, var(--color-moss) 20%, transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
 }
 
-[x-cloak] {
-    display: none;
-}
-
-.grain {
+@layer utilities {
+  .grain {
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E");
     background-size: 180px 180px;
-}
+  }
 
-.surface-shadow {
-    box-shadow: 12px 14px 0 color-mix(in srgb, var(--color-moss) 20%, transparent);
-}
+  .bg-radial-mesh {
+    background: radial-gradient(circle at 20% 50%, rgba(212, 175, 55, 0.15) 0%, transparent 40%),
+      radial-gradient(circle at 80% 30%, rgba(232, 111, 81, 0.12) 0%, transparent 40%),
+      radial-gradient(circle at 50% 80%, rgba(46, 26, 71, 0.10) 0%, transparent 40%);
+  }
 
-@media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-        scroll-behavior: auto !important;
-        transition-duration: 0.01ms !important;
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-    }
+  .glass-black-10 {
+    background: rgba(5, 5, 5, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(24px);
+  }
+
+  .glass-black-20 {
+    background: rgba(5, 5, 5, 0.20);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(24px);
+  }
+
+  .glass-white-5 {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    backdrop-filter: blur(20px);
+  }
+
+  .glass-white-10 {
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+  }
+
+  .inner-highlight {
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  }
+
+  .transition-elastic {
+    transition-timing-function: var(--transition-elastic);
+  }
+
+  .transition-elastic-soft {
+    transition-timing-function: var(--transition-elastic-soft);
+  }
 }

@@ -21,6 +21,7 @@ use App\Livewire\User\Dashboard;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'main')->name('home');
+Route::redirect('register', '/')->name('register');
 Route::get('shop', Shop::class)->name('customer.shop');
 
 Route::middleware(['auth', 'verified'])->group(function (): void {

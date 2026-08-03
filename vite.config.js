@@ -10,4 +10,9 @@ export default defineConfig({
             refresh: [...refreshPaths, "app/Livewire/**"],
         }),
     ],
+    server: {
+        fs: {
+            allow: [".."],
+        },
+    },
 });

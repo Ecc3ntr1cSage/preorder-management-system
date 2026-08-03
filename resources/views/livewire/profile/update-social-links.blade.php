@@ -1,37 +1,43 @@
-<x-form-section submit="updateSocialLinks">
-    <x-slot name="title">
-        {{ __('Social Links') }}
-    </x-slot>
-
-    <x-slot name="description">
-        {{ __('Update your account\'s social links to display it in your campaign.') }}
-    </x-slot>
-
-    <x-slot name="form">
-        <div class="col-span-6 sm:col-span-4">
-            <x-label value="{{ __('Instagram') }}" />
-            <x-input type="text" class="block w-full mt-1" wire:model="links.instagram" autocomplete="links.instagram" />
-            <x-input-error for="links.instagram" class="mt-2" />
+<form wire:submit="updateSocialLinks">
+    <div class="grid gap-8 lg:grid-cols-2">
+        <div>
+            <label for="instagram" class="swiss-label"><span class="text-[#e61919]">+</span>03.1 instagram</label>
+            <input id="instagram" type="text" class="swiss-field" wire:model="links.instagram" autocomplete="links.instagram" placeholder="handle" />
+            @error('links.instagram')
+                <p class="swiss-mono mt-2 text-[10px] uppercase tracking-[0.15em] text-[#e61919]">[ err ] {{ $message }}</p>
+            @enderror
         </div>
-        <div class="col-span-6 sm:col-span-4">
-            <x-label value="{{ __('Tiktok') }}" />
-            <x-input type="text" class="block w-full mt-1" wire:model="links.tiktok" autocomplete="links.tiktok" />
-            <x-input-error for="links.tiktok" class="mt-2" />
-        </div>
-        <div class="col-span-6 sm:col-span-4">
-            <x-label value="{{ __('Facebook') }}" />
-            <x-input type="text" class="block w-full mt-1" wire:model="links.facebook"
-                autocomplete="links.facebook" />
-            <x-input-error for="links.facebook" class="mt-2" />
-        </div>
-    </x-slot>
 
-    <x-slot name="actions">
-        <x-action-message class="mr-3" on="saved">
-            {{ __('Saved.') }}
-        </x-action-message>
-        <x-button wire:loading.attr="disabled" wire:target="photo">
-            {{ __('Save') }}
-        </x-button>
-    </x-slot>
-</x-form-section>
+        <div>
+            <label for="tiktok" class="swiss-label"><span class="text-[#e61919]">+</span>03.2 tiktok</label>
+            <input id="tiktok" type="text" class="swiss-field" wire:model="links.tiktok" autocomplete="links.tiktok" placeholder="handle" />
+            @error('links.tiktok')
+                <p class="swiss-mono mt-2 text-[10px] uppercase tracking-[0.15em] text-[#e61919]">[ err ] {{ $message }}</p>
+            @enderror
+        </div>
+
+        <div>
+            <label for="facebook" class="swiss-label"><span class="text-[#e61919]">+</span>03.3 facebook</label>
+            <input id="facebook" type="text" class="swiss-field" wire:model="links.facebook" autocomplete="links.facebook" placeholder="page" />
+            @error('links.facebook')
+                <p class="swiss-mono mt-2 text-[10px] uppercase tracking-[0.15em] text-[#e61919]">[ err ] {{ $message }}</p>
+            @enderror
+        </div>
+    </div>
+
+    <div class="mt-8 flex items-center gap-4 border-t border-[#0b0b0b]/20 pt-5">
+        <div x-data="{ shown: false, timeout: null }"
+            x-init="@this.on('saved', () => { clearTimeout(timeout); shown = true; timeout = setTimeout(() => { shown = false }, 2000); })"
+            x-show.transition.out.opacity.duration.1500ms="shown"
+            x-transition:leave.opacity.duration.1500ms
+            style="display: none;"
+            class="swiss-mono text-[10px] uppercase tracking-[0.2em] text-[#e61919]">
+            <samp>[ ok ] saved</samp>
+        </div>
+
+        <button type="submit" class="swiss-btn--primary ml-auto" wire:loading.attr="disabled" wire:target="photo">
+            <span wire:loading.remove wire:target="photo">{{ __('Commit Change') }} &gt;&gt;&gt;</span>
+            <span wire:loading wire:target="photo">Transmitting &hellip;</span>
+        </button>
+    </div>
+</form>

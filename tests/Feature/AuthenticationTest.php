@@ -11,11 +11,21 @@ class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_login_screen_can_be_rendered(): void
+    public function test_login_route_renders_the_homepage_with_the_modal_open(): void
     {
         $response = $this->get('/login');
 
-        $response->assertStatus(200);
+        $response
+            ->assertOk()
+            ->assertSee('loginOpen: true', false)
+            ->assertSee('login-dialog')
+            ->assertSeeInOrder([
+                'maya@preshop.test',
+                'irfan@preshop.test',
+                'nadia@preshop.test',
+                'daniel@preshop.test',
+                'sofia@preshop.test',
+            ]);
     }
 
     public function test_users_can_authenticate_using_the_login_screen(): void
@@ -35,11 +45,13 @@ class AuthenticationTest extends TestCase
     {
         $user = User::factory()->create();
 
-        $this->post('/login', [
+        $response = $this->post('/login', [
             'email' => $user->email,
             'password' => 'wrong-password',
+            'login_modal' => '1',
         ]);
 
+        $response->assertSessionHasInput('login_modal', '1');
         $this->assertGuest();
     }
 }

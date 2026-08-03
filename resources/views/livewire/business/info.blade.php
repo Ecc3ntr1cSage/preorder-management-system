@@ -70,7 +70,7 @@
                         </div>
                     </div>
                     {{-- Shipping Details --}}
-                    <div class="mt-3 lg:mt-1" x-data="{ nav: Object.values(JSON.parse('{{ $campaign->shipping }}')).some(value => value !== '') ? 2 : 1 }">
+                    <div class="mt-3 lg:mt-1" x-data="{ nav: Object.values(@js($campaign->shipping ?? [])).some(value => value !== '') ? 2 : 1 }">
                         <x-label value="{{ __('Shipping Options') }}" />
                         <div class="inline-flex p-1 gap-0.5 border-2 border-gray-400 rounded-md">
                             <button type="button" x-on:click="nav = 1" wire:click="resetShipping"

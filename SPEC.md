@@ -226,10 +226,8 @@ All monetary values stored as **integers in cents (sen)**. Division by 100 on di
 
 ### 3.5 Auth Redirection
 
-Login/Register responses redirect based on `role_id` (via `LoginResponse` / `RegisterResponse`):
-- `role_id` 0 or 1 → `/admin/overview`
-- `role_id` 2 → `/dashboard/publish`
-- `role_id` 3 → `/shop`
+`LoginResponse` redirects admins to `/admin/overview` and members to `/dashboard`.
+Registration is disabled; `/register` redirects to `/`.
 
 ---
 
@@ -463,8 +461,7 @@ app/
 │   ├── Middleware/
 │   │   └── RoleMiddleware.php     # Role-based access
 │   └── Responses/
-│       ├── LoginResponse.php      # Role-based redirect
-│       └── RegisterResponse.php
+│       └── LoginResponse.php      # Admin/member redirect
 ├── Livewire/
 │   ├── Admin/ (7 components)
 │   ├── Business/ (5 components)
