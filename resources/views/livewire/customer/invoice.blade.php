@@ -1,132 +1,102 @@
-@inject('carbon', 'Carbon\Carbon')
-<div class="max-w-2xl min-h-screen p-1 mx-auto lg:p-6">
-    <div class="flex flex-col p-4 bg-gray-800 rounded-lg shadow-md sm:p-10">
-        <div class="mx-auto">
-            <a href="{{ route('customer.history') }}"
-                class="px-4 py-2 text-xs text-white bg-gray-600 rounded-md hover:bg-gray-700 w-20px">
-                View All Past Orders
+@inject('carbon', 'Carbon\\Carbon')
+@php
+    $statusLabels = ['Preorder', 'Campaign ended', 'Shipped', 'Delivered'];
+    $statusIndex = min(max((int) $order->status, 0), 3);
+    $campaign = $order->campaign;
+    $cover = $campaign?->images?->first();
+    $subtotal = $order->amount + $order->discount - $order->shipping;
+@endphp
+
+<section class="relative isolate overflow-hidden bg-paper">
+    <div class="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[32rem] bg-[radial-gradient(circle_at_8%_10%,rgba(105,115,91,.16),transparent_34%),radial-gradient(circle_at_92%_0%,rgba(232,111,81,.14),transparent_30%)]"></div>
+
+    <div class="mx-auto max-w-7xl px-4 pb-20 pt-10 sm:px-6 sm:pt-16 lg:px-10 lg:pb-28">
+        <div class="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
+            <div class="max-w-2xl">
+                <p class="inline-flex rounded-full bg-moss/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-moss">Order record · PS-{{ str_pad($order->id, 6, '0', STR_PAD_LEFT) }}</p>
+                <h1 class="mt-5 max-w-xl font-display text-5xl font-semibold leading-[.95] tracking-[-0.06em] text-ink sm:text-7xl">A small promise, now on record.</h1>
+                <p class="mt-5 max-w-lg text-base leading-7 text-ink/60">Your preorder is safely logged. Keep this page close for the latest movement on your backed idea.</p>
+            </div>
+            <a href="{{ route('customer.history') }}" wire:navigate class="group inline-flex w-fit items-center gap-3 rounded-full bg-ink px-4 py-2.5 text-sm font-semibold text-paper shadow-[0_18px_40px_rgba(5,5,5,.12)] transition-transform duration-700 ease-[cubic-bezier(.32,.72,0,1)] hover:-translate-y-0.5 hover:bg-accent active:scale-[.98]">
+                <span>Past orders</span>
+                <span class="flex size-7 items-center justify-center rounded-full bg-paper/10 transition-transform duration-700 ease-[cubic-bezier(.32,.72,0,1)] group-hover:translate-x-1">
+                    <svg viewBox="0 0 24 24" fill="none" class="size-3.5" aria-hidden="true"><path d="M5 12h13m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </span>
             </a>
         </div>
-        <div class="flex justify-between mt-8">
-            <div>
-                <img src="{{ asset('asset/preorder.png') }}" alt="" class="w-10" />
-                <h1 class="mt-2 text-lg font-semibold text-blue-600 md:text-xl dark:text-white"></h1>
-            </div>
-            <div class="text-end">
-                <h2 class="text-2xl font-semibold md:text-3xl dark:text-gray-200">Invoice #
-                </h2>
-                <span class="block mt-1 text-gray-400">PS-{{ str_pad($order->id, 6, '0', STR_PAD_LEFT) }}</span>
-            </div>
-        </div>
-        <div class="grid gap-3 mt-8 sm:grid-cols-2">
-            <div>
-                <h3 class="text-lg font-semibold text-gray-200">Bill to:</h3>
-                <h3 class="text-lg font-semibold text-gray-200">{{ $order->name }}</h3>
-                <address class="mt-2 not-italic text-gray-400">
-                    {{ $order->address }}<br>
-                    {{ $order->postcode }}<br>
-                    <span class="capitalize">{{ $order->state }}</span>
-                </address>
-            </div>
-            <div class="space-y-2 sm:text-end">
-                <div class="grid grid-cols-2 gap-3 sm:grid-cols-1 sm:gap-2">
-                    <dl class="grid sm:grid-cols-5 gap-x-3">
-                        <dt class="col-span-3 font-semibold text-gray-200">Paid at:
-                        </dt>
-                        <dd class="col-span-2 text-gray-400">
-                            {{ $carbon::parse($order->paid_at)->format('n/j/Y g:iA') }}</dd>
-                    </dl>
-                </div>
-            </div>
-        </div>
-        <div class="mt-6">
-            <div class="p-4 space-y-4 border border-gray-200 rounded-lg dark:border-gray-700">
-                <div class="hidden sm:grid sm:grid-cols-8">
-                    <div class="text-xs font-medium text-gray-400 uppercase sm:col-span-4">Item</div>
-                    <div class="text-xs font-medium text-gray-400 uppercase text-start sm:col-span-1">Qty</div>
-                    <div class="text-xs font-medium text-gray-400 uppercase text-start sm:col-span-2">Variations</div>
-                    <div class="text-xs font-medium text-gray-400 uppercase text-end">Amount</div>
-                </div>
-                <div class="hidden border-b border-gray-200 sm:block dark:border-gray-700"></div>
-                <div class="grid items-center grid-cols-3 gap-2 text-xs sm:grid-cols-8">
-                    <div class="col-span-full sm:col-span-4">
-                        <h5 class="font-medium text-gray-400 uppercase sm:hidden">Item</h5>
-                        <p class="text-sm font-medium text-gray-200 capitalize">{{ $order->campaign->title }}</p>
+
+        <div class="mt-12 grid gap-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(21rem,.85fr)] lg:items-start">
+            <article class="rounded-[2rem] bg-ink/5 p-1.5 ring-1 ring-ink/10" wire:loading.class="opacity-60">
+                <div class="overflow-hidden rounded-[calc(2rem-0.375rem)] bg-[#171412] text-paper shadow-[0_28px_80px_rgba(46,26,71,.14)]">
+                    <div class="grid gap-8 p-6 sm:p-9 lg:grid-cols-[minmax(10rem,.38fr)_1fr] lg:gap-10">
+                        <div class="relative aspect-[4/5] overflow-hidden rounded-[1.4rem] bg-[#2b2420]">
+                            <img src="{{ $cover ? asset('storage/campaign/' . $cover->image) : asset('asset/product/field-notes.png') }}" alt="{{ $campaign?->title ?? 'Backed campaign' }}" class="h-full w-full object-cover opacity-90 transition-transform duration-[1200ms] ease-[cubic-bezier(.32,.72,0,1)] hover:scale-105" />
+                            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+                            <span class="absolute bottom-4 left-4 rounded-full bg-paper/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-ink">Paid</span>
+                        </div>
+
+                        <div class="flex flex-col justify-between gap-10">
+                            <div>
+                                <p class="text-[10px] uppercase tracking-[0.22em] text-paper/45">Backed campaign</p>
+                                <h2 class="mt-3 font-display text-3xl font-semibold leading-tight tracking-[-0.04em] sm:text-4xl">{{ $campaign?->title ?? 'Untitled campaign' }}</h2>
+                                <p class="mt-3 max-w-md text-sm leading-6 text-paper/60">{{ $order->variations ? ucfirst($order->variations) : 'Standard selection' }} · {{ $order->quantity }} {{ $order->quantity === 1 ? 'unit' : 'units' }}</p>
+                            </div>
+
+                            <dl class="grid grid-cols-2 gap-6 border-t border-paper/10 pt-6 text-sm sm:grid-cols-3">
+                                <div><dt class="text-[10px] uppercase tracking-[0.18em] text-paper/40">Placed</dt><dd class="mt-2 text-paper/85">{{ optional($order->paid_at)->format('d M Y') ?? '—' }}</dd></div>
+                                <div><dt class="text-[10px] uppercase tracking-[0.18em] text-paper/40">Quantity</dt><dd class="mt-2 text-paper/85">{{ $order->quantity }}</dd></div>
+                                <div><dt class="text-[10px] uppercase tracking-[0.18em] text-paper/40">Order total</dt><dd class="mt-2 font-semibold text-gold">RM{{ number_format($order->amount / 100, 2) }}</dd></div>
+                            </dl>
+                        </div>
                     </div>
-                    <div class="sm:col-span-1">
-                        <h5 class="font-medium text-gray-400 uppercase sm:hidden">Qty</h5>
-                        <p class="text-gray-200">{{ $order->quantity }}</p>
-                    </div>
-                    <div class="sm:col-span-2">
-                        <h5 class="font-medium text-gray-400 uppercase sm:hidden">Variations</h5>
-                        <p class="text-gray-200 uppercase">{{ $order->variations }}</p>
-                    </div>
-                    <div>
-                        <h5 class="font-medium text-gray-400 uppercase sm:hidden">Amount</h5>
-                        <p class="text-gray-200 sm:text-end">
-                            RM{{ number_format(($order->amount + $order->discount - $order->shipping) / $order->quantity / 100, 2) }}
-                        </p>
+
+                    <div class="mx-6 mb-6 rounded-[1.35rem] bg-paper/[.07] p-5 sm:mx-9 sm:mb-9 sm:p-6">
+                        <div class="flex items-center justify-between gap-4">
+                            <div><p class="text-[10px] uppercase tracking-[0.2em] text-paper/40">Current stage</p><p class="mt-2 font-display text-xl font-medium">{{ $statusLabels[$statusIndex] }}</p></div>
+                            <span class="flex size-10 items-center justify-center rounded-full bg-gold/15 text-gold">
+                                <svg viewBox="0 0 24 24" fill="none" class="size-5" aria-hidden="true"><path d="M12 6v6l4 2" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" /><circle cx="12" cy="12" r="8.25" stroke="currentColor" stroke-width="1.35" /></svg>
+                            </span>
+                        </div>
+                        <div class="mt-7" aria-label="Order progress">
+                            <div class="relative h-1 rounded-full bg-paper/10"><div class="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-gold to-accent {{ $statusIndex === 0 ? 'w-[8%]' : ($statusIndex === 1 ? 'w-[38%]' : ($statusIndex === 2 ? 'w-[70%]' : 'w-full')) }}"></div></div>
+                            <ol class="mt-4 grid grid-cols-4 gap-2 text-[10px] uppercase tracking-[0.12em] text-paper/45">
+                                @foreach ($statusLabels as $index => $label)
+                                    <li class="{{ $index <= $statusIndex ? 'text-paper/85' : '' }} {{ $index === 3 ? 'text-right' : ($index > 0 ? 'text-center' : '') }}"><span class="mb-2 inline-flex size-2 rounded-full {{ $index <= $statusIndex ? 'bg-gold' : 'bg-paper/20' }}"></span><span class="block">{{ $label }}</span></li>
+                                @endforeach
+                            </ol>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="flex mt-8 sm:justify-end">
-            <div class="w-full max-w-2xl space-y-2 sm:text-end">
-                <div class="grid grid-cols-2 gap-3 sm:grid-cols-1 sm:gap-2">
-                    <dl class="grid sm:grid-cols-5 gap-x-3">
-                        <dt class="col-span-3 font-semibold text-gray-200">Subtotal:</dt>
-                        <dd class="col-span-2 text-gray-200">
-                            RM{{ number_format(($order->amount + $order->discount - $order->shipping) / 100, 2) }}</dd>
-                    </dl>
-                    <dl class="grid sm:grid-cols-5 gap-x-3">
-                        <dt class="col-span-3 font-semibold text-gray-200">Shipping</dt>
-                        @if ($order->shipping == 0)
-                            <dd class="col-span-2 text-gray-200">Free shipping</dd>
-                        @else
-                            <dd class="col-span-2 text-gray-200">RM{{ number_format($order->shipping / 100, 2) }}</dd>
-                        @endif
-                    </dl>
-                    @if ($order->discount != 0)
-                        <dl class="grid sm:grid-cols-5 gap-x-3">
-                            <dt class="col-span-3 font-semibold text-gray-200">Discount</dt>
-                            <dd class="col-span-2 text-gray-200">
-                                - RM{{ number_format($order->discount / 100, 2) }}</dd>
+            </article>
+
+            <aside class="space-y-5">
+                <div class="rounded-[2rem] bg-ink/5 p-1.5 ring-1 ring-ink/10">
+                    <div class="rounded-[calc(2rem-0.375rem)] bg-white/70 p-6 shadow-[0_24px_70px_rgba(71,52,38,.09)] sm:p-8">
+                        <div class="flex items-start justify-between gap-5">
+                            <div><p class="text-[10px] font-semibold uppercase tracking-[0.22em] text-moss">Payment summary</p><h2 class="mt-3 font-display text-2xl font-semibold tracking-[-0.04em]">Invoice</h2></div>
+                            <p class="font-mono text-xs tracking-[0.12em] text-ink/45">PS-{{ str_pad($order->id, 6, '0', STR_PAD_LEFT) }}</p>
+                        </div>
+                        <dl class="mt-8 space-y-4 text-sm">
+                            <div class="flex justify-between gap-4"><dt class="text-ink/55">Subtotal</dt><dd class="font-medium">RM{{ number_format($subtotal / 100, 2) }}</dd></div>
+                            <div class="flex justify-between gap-4"><dt class="text-ink/55">Shipping</dt><dd class="font-medium">{{ $order->shipping == 0 ? 'Free' : 'RM' . number_format($order->shipping / 100, 2) }}</dd></div>
+                            @if ($order->discount != 0)<div class="flex justify-between gap-4 text-moss"><dt>Discount</dt><dd>- RM{{ number_format($order->discount / 100, 2) }}</dd></div>@endif
+                            <div class="my-5 h-px bg-ink/10"></div>
+                            <div class="flex items-end justify-between gap-4"><dt class="font-display text-lg font-semibold">Amount paid</dt><dd class="font-display text-2xl font-semibold text-accent">RM{{ number_format($order->amount / 100, 2) }}</dd></div>
                         </dl>
-                    @endif
-                    <dl class="grid sm:grid-cols-5 gap-x-3">
-                        <dt class="col-span-3 font-semibold text-indigo-400">Amount paid:
-                        </dt>
-                        <dd class="col-span-2 text-indigo-400">RM{{ number_format($order->amount / 100, 2) }}</dd>
-                    </dl>
+                        <p class="mt-7 text-xs leading-5 text-ink/45">Paid {{ optional($order->paid_at)->format('d M Y · g:i A') ?? 'date unavailable' }}. This receipt is your order confirmation.</p>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div
-        class="flex flex-col p-4 mt-1 space-y-5 transition bg-gray-800 rounded-lg shadow-md sm:px-10 hover:shadow-indigo-500/30">
-        <p class="font-semibold text-gray-200">Order Progress</p>
-        <div class="relative">
-            <p class="absolute w-full h-2 rounded-full bg-neutral-800"></p>
-            @if ($order->status == 0)
-                <p class="absolute w-[10%] h-2 bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 rounded-full">
-                </p>
-            @elseif($order->status == 1)
-                <p class="absolute h-2 bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 rounded-full w-[40%]">
-                </p>
-            @elseif($order->status == 2)
-                <p class="absolute w-[70%] h-2 bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500 rounded-full">
-                </p>
-            @elseif($order->status == 3)
-                <p class="absolute w-full h-2 rounded-full bg-gradient-to-r from-sky-400 via-blue-500 to-indigo-500">
-                </p>
-            @endif
-        </div>
-        <div class="flex justify-between px-2 text-xs text-gray-200">
-            <p>Preorder</p>
-            <p>Campaign Ended</p>
-            <p>Shipped</p>
-            <p>Delivered</p>
+
+                <div class="rounded-[2rem] bg-ink/5 p-1.5 ring-1 ring-ink/10">
+                    <div class="rounded-[calc(2rem-0.375rem)] bg-moss p-6 text-paper sm:p-8">
+                        <p class="text-[10px] font-semibold uppercase tracking-[0.22em] text-paper/55">Shipping to</p>
+                        <h2 class="mt-3 font-display text-2xl font-semibold tracking-[-0.04em]">{{ $order->name }}</h2>
+                        <address class="mt-4 not-italic text-sm leading-6 text-paper/70">{{ $order->address }}<br>{{ $order->postcode }} · <span class="capitalize">{{ $order->state }}</span></address>
+                        <div class="mt-7 flex items-center gap-2 text-xs text-paper/55"><span class="size-1.5 rounded-full bg-gold"></span>Updates will follow the order record.</div>
+                    </div>
+                </div>
+            </aside>
         </div>
     </div>
     <x-flash />
-</div>
+</section>

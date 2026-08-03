@@ -55,7 +55,7 @@ class Payout extends Component
             $this->dispatch('error', message: 'Incomplete Bank Details');
         } elseif ($this->wallet->balance == 0) {
             $this->dispatch('error', message: 'You have nothing to withdraw');
-        } elseif ($this->wallet->status == 2){
+        } elseif ($this->wallet->status == Wallet::STATUS_WITHDRAWAL_PENDING){
             $this->dispatch('error', message: 'Withdrawal Request Pending');
         }
         else {
@@ -97,12 +97,12 @@ class Payout extends Component
                 'withdrawn_amount' => $amount,
                 'credited_amount' => 0,
                 'final_balance' => $this->wallet->balance - $amount,
-                'status' => 3,
+                'status' => Transaction::STATUS_PENDING,
             ]);
 
             $this->wallet->update([
                 'balance' => $this->wallet->balance - $amount,
-                'status' => 2,
+                'status' => Wallet::STATUS_WITHDRAWAL_PENDING,
             ]);
           
             $this->reset('withdrawAmount');

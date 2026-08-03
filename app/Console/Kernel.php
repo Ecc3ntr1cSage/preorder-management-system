@@ -29,7 +29,7 @@ class Kernel extends ConsoleKernel
                     $campaign->orders()->update(['status' => 2]);
                 }
             }
-        })->name('update_campaign_status')->daily()->timezone('Asia/Singapore')->withoutOverlapping();
+        })->name('update_campaign_status')->daily()->timezone('Asia/Kuala_Lumpur')->withoutOverlapping();
     }
 
     /**

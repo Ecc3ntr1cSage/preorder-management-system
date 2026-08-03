@@ -13,10 +13,27 @@
 <body class="min-h-screen bg-paper font-sans text-ink selection:bg-accent selection:text-white">
     <a href="#content" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-4 focus:py-3 focus:text-white">Skip to content</a>
     <header class="border-b border-ink/10 bg-paper/90 backdrop-blur">
-        <nav class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-10" aria-label="Workspace navigation">
-            <div class="flex items-center gap-6"><a href="{{ route('home') }}" class="font-display text-xl font-bold tracking-tight">pre<span class="text-accent">.</span>shop</a><div class="hidden items-center gap-5 text-sm font-semibold md:flex"><a href="{{ route('customer.shop') }}" class="text-ink/65 hover:text-accent">Browse</a><a href="{{ route('dashboard') }}" class="text-ink/65 hover:text-accent">Workspace</a>@if(auth()->user()->is_admin)<a href="{{ route('admin.overview') }}" class="text-ink/65 hover:text-accent">Admin</a>@endif</div></div>
-            <div class="flex items-center gap-3 text-sm"><a href="{{ route('profile.show') }}" class="hidden text-ink/65 hover:text-accent sm:inline">{{ auth()->user()->name }}</a><form method="POST" action="{{ route('logout') }}">@csrf<button type="submit" class="rounded-full border border-ink/20 px-4 py-2 font-semibold hover:border-accent hover:text-accent">Log out</button></form></div>
-        </nav>
+        @if (auth()->user()->is_admin)
+            <nav class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:gap-6 sm:px-6 lg:px-10" aria-label="Admin navigation">
+                <div class="flex min-w-0 items-center gap-4 sm:gap-6"><a href="{{ route('home') }}" class="shrink-0 font-display text-xl font-bold tracking-tight">pre<span class="text-accent">.</span>shop</a><div class="flex min-w-0 items-center gap-1 overflow-x-auto">
+                    @foreach ([
+                        ['label' => 'Overview', 'route' => 'admin.overview', 'match' => 'admin.overview'],
+                        ['label' => 'Users', 'route' => 'admin.users', 'match' => 'admin.users'],
+                        ['label' => 'Campaigns', 'route' => 'admin.campaign', 'match' => 'admin.campaign*'],
+                        ['label' => 'Sales', 'route' => 'admin.sale', 'match' => 'admin.sale'],
+                        ['label' => 'Payouts', 'route' => 'admin.wallet', 'match' => 'admin.wallet'],
+                    ] as $item)
+                        <a href="{{ route($item['route']) }}" wire:navigate class="shrink-0 rounded-full px-3 py-2 text-sm font-semibold {{ request()->routeIs($item['match']) ? 'bg-ink text-paper' : 'text-ink/55 hover:bg-ink/5 hover:text-ink' }}">{{ $item['label'] }}</a>
+                    @endforeach
+                </div></div>
+                <div class="flex items-center gap-3 text-sm"><span class="hidden text-ink/65 sm:inline">{{ auth()->user()->name }}</span><form method="POST" action="{{ route('logout') }}">@csrf<button type="submit" class="rounded-full border border-ink/20 px-4 py-2 font-semibold hover:border-accent hover:text-accent">Log out</button></form></div>
+            </nav>
+        @else
+            <nav class="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-10" aria-label="Workspace navigation">
+                <div class="flex items-center gap-6"><a href="{{ route('home') }}" class="font-display text-xl font-bold tracking-tight">pre<span class="text-accent">.</span>shop</a><div class="hidden items-center gap-5 text-sm font-semibold md:flex"><a href="{{ route('customer.shop') }}" class="text-ink/65 hover:text-accent">Browse</a><a href="{{ route('dashboard') }}" class="text-ink/65 hover:text-accent">Workspace</a></div></div>
+                <div class="flex items-center gap-3 text-sm"><a href="{{ route('profile.show') }}" class="hidden text-ink/65 hover:text-accent sm:inline">{{ auth()->user()->name }}</a><form method="POST" action="{{ route('logout') }}">@csrf<button type="submit" class="rounded-full border border-ink/20 px-4 py-2 font-semibold hover:border-accent hover:text-accent">Log out</button></form></div>
+            </nav>
+        @endif
     </header>
     @if (session('message'))<div class="mx-auto max-w-7xl px-4 pt-4 sm:px-6 lg:px-10"><div class="rounded-xl bg-moss px-4 py-3 text-sm font-semibold text-white">{{ session('message') }}</div></div>@endif
     <main id="content">{{ $slot }}</main>

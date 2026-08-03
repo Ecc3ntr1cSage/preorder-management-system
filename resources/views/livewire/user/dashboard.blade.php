@@ -17,7 +17,7 @@
             <div class="rounded-2xl bg-moss p-5 text-paper shadow-sm"><p class="text-sm text-paper/65">Available balance</p><p class="mt-2 font-display text-3xl font-semibold">RM {{ number_format(($wallet?->balance ?? 0) / 100, 2) }}</p></div>
         </section>
 
-        <div class="grid gap-8 lg:grid-cols-[1.25fr_.75fr]">
+        <div class="grid gap-8 lg:grid-cols-2">
             <section class="rounded-2xl bg-white p-6 shadow-sm">
                 <div class="flex items-center justify-between gap-4"><div><p class="text-xs font-semibold uppercase tracking-[0.2em] text-moss">Your work</p><h2 class="mt-1 font-display text-2xl font-semibold">Recent campaigns</h2></div><a href="{{ route('business.manage') }}" class="text-sm font-semibold text-accent hover:text-accent-dark">View all</a></div>
                 <div class="mt-6 divide-y divide-ink/10">
@@ -29,13 +29,26 @@
                 </div>
             </section>
 
-            <section class="rounded-2xl bg-ink p-6 text-paper shadow-sm">
-                <p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">As a buyer</p><h2 class="mt-1 font-display text-2xl font-semibold">Recent orders</h2>
-                <div class="mt-6 space-y-4">
+            <section x-data="{ tab: 'orders' }" class="rounded-2xl bg-ink p-6 text-paper shadow-sm">
+                <div class="flex items-start justify-between gap-4"><div><p class="text-xs font-semibold uppercase tracking-[0.2em] text-accent">Your activity</p><h2 class="mt-1 font-display text-2xl font-semibold">Orders &amp; sales</h2></div></div>
+                <div class="mt-6 flex rounded-full bg-paper/5 p-1 ring-1 ring-paper/10">
+                    <button type="button" x-on:click="tab = 'orders'" x-bind:class="tab === 'orders' ? 'bg-gold text-ink' : 'text-paper/55 hover:text-paper'" class="flex-1 rounded-full px-3 py-2 text-xs font-semibold transition-all duration-700 ease-[cubic-bezier(.32,.72,0,1)]">Your orders</button>
+                    <button type="button" x-on:click="tab = 'sales'" x-bind:class="tab === 'sales' ? 'bg-gold text-ink' : 'text-paper/55 hover:text-paper'" class="flex-1 rounded-full px-3 py-2 text-xs font-semibold transition-all duration-700 ease-[cubic-bezier(.32,.72,0,1)]">Your sales</button>
+                </div>
+                <div x-cloak x-show="tab === 'orders'" x-transition:enter="transition duration-500 ease-[cubic-bezier(.32,.72,0,1)]" x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" class="mt-6 space-y-4">
+                    <div class="flex items-center justify-between gap-4"><p class="text-xs font-semibold uppercase tracking-[0.2em] text-paper/45">Recent orders</p><a href="{{ route('customer.history') }}" wire:navigate class="group inline-flex items-center gap-2 text-xs font-semibold text-paper/60 transition-all duration-700 ease-[cubic-bezier(.32,.72,0,1)] hover:-translate-y-0.5 hover:text-accent">View all <span class="transition-transform duration-700 ease-[cubic-bezier(.32,.72,0,1)] group-hover:translate-x-1">↗</span></a></div>
                     @forelse ($orders as $order)
                         <a href="{{ route('customer.invoice', $order) }}" class="block border-b border-paper/15 pb-4 last:border-0 last:pb-0 hover:text-accent"><div class="flex justify-between gap-4"><span class="font-semibold">{{ $order->campaign?->title ?? 'Campaign' }}</span><span>RM {{ number_format($order->amount / 100, 2) }}</span></div><p class="mt-1 text-sm text-paper/55">{{ $order->paid ? 'Paid' : 'Pending' }} · {{ optional($order->paid_at)->format('d M Y') }}</p></a>
                     @empty
                         <p class="text-sm leading-6 text-paper/60">Your order history will appear here after your first preorder.</p>
+                    @endforelse
+                </div>
+                <div x-cloak x-show="tab === 'sales'" x-transition:enter="transition duration-500 ease-[cubic-bezier(.32,.72,0,1)]" x-transition:enter-start="opacity-0 translate-y-1" x-transition:enter-end="opacity-100 translate-y-0" class="mt-6 space-y-4">
+                    <div class="flex items-center justify-between gap-4"><p class="text-xs font-semibold uppercase tracking-[0.2em] text-paper/45">Recent sales</p><a href="{{ route('business.sales') }}" wire:navigate class="group inline-flex items-center gap-2 text-xs font-semibold text-paper/60 transition-all duration-700 ease-[cubic-bezier(.32,.72,0,1)] hover:-translate-y-0.5 hover:text-accent">View all <span class="transition-transform duration-700 ease-[cubic-bezier(.32,.72,0,1)] group-hover:translate-x-1">↗</span></a></div>
+                    @forelse ($sales as $sale)
+                        <div class="border-b border-paper/15 pb-4 last:border-0 last:pb-0"><div class="flex justify-between gap-4"><span class="font-semibold">{{ $sale->campaign?->title ?? 'Campaign' }}</span><span>RM {{ number_format($sale->amount / 100, 2) }}</span></div><p class="mt-1 text-sm text-paper/55">{{ $sale->name }} · {{ $sale->paid ? 'Paid' : 'Pending' }} · {{ optional($sale->paid_at)->format('d M Y') }}</p></div>
+                    @empty
+                        <p class="text-sm leading-6 text-paper/60">Sales from your campaigns will appear here.</p>
                     @endforelse
                 </div>
             </section>

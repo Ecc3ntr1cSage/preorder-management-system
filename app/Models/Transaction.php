@@ -9,6 +9,11 @@ class Transaction extends Model
 {
     use HasFactory;
 
+    public const STATUS_CREDITED = 1;
+    public const STATUS_APPROVED = 2;
+    public const STATUS_PENDING = 3;
+    public const STATUS_REJECTED = 4;
+
     protected $table = 'transactions';
     protected $fillable = [
         'wallet_id',

@@ -1,5 +1,6 @@
 @php
     $demoAccounts = [
+        ['name' => 'Preshop Admin', 'email' => 'admin@preshop.test'],
         ['name' => 'Maya Tan', 'email' => 'maya@preshop.test'],
         ['name' => 'Irfan Rahman', 'email' => 'irfan@preshop.test'],
         ['name' => 'Nadia Lim', 'email' => 'nadia@preshop.test'],

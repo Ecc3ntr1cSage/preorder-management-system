@@ -18,12 +18,6 @@ class AdminUsers extends Component
         $this->resetPage();
     }
 
-    public function toggleAdmin(int $userId): void
-    {
-        $user = User::where('is_admin', false)->findOrFail($userId);
-        $user->update(['is_admin' => ! $user->is_admin]);
-    }
-
     #[Layout('layouts.app')]
     public function render()
     {
@@ -34,6 +28,7 @@ class AdminUsers extends Component
                     ->where('name', 'like', "%{$this->search}%")
                     ->orWhere('email', 'like', "%{$this->search}%")))
             ->withCount('campaigns')
+            ->withCount('orders')
             ->latest()
             ->paginate(12);
 

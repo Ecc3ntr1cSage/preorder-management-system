@@ -188,7 +188,9 @@ class Payment extends Component
     public function render()
     {
         $this->campaign = Campaign::findOrFail($this->preorder['campaign_id']);
-        $this->shippingArray = $this->campaign->shipping ?? [];
+        $this->shippingArray = is_array($this->campaign->shipping)
+            ? $this->campaign->shipping
+            : (json_decode($this->campaign->shipping, true) ?: []);
         $calculations = $this->calculate();
 
         return view('livewire.customer.payment', compact('calculations'));

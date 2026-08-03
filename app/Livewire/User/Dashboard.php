@@ -18,6 +18,7 @@ class Dashboard extends Component
         return view('livewire.user.dashboard', [
             'campaigns' => Campaign::where('user_id', $user->id)->latest()->take(4)->get(),
             'orders' => Order::with('campaign')->where('user_id', $user->id)->latest('created_at')->take(4)->get(),
+            'sales' => Order::with('campaign')->whereHas('campaign', fn ($query) => $query->where('user_id', $user->id))->latest('paid_at')->take(4)->get(),
             'campaignCount' => Campaign::where('user_id', $user->id)->count(),
             'salesCount' => Order::whereHas('campaign', fn ($query) => $query->where('user_id', $user->id))->where('paid', true)->count(),
             'wallet' => $user->wallet,

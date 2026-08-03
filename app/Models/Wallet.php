@@ -9,6 +9,9 @@ class Wallet extends Model
 {
     use HasFactory;
 
+    public const STATUS_ACTIVE = 1;
+    public const STATUS_WITHDRAWAL_PENDING = 2;
+
     protected $table = 'wallets';
     protected $fillable = [
         'user_id',
@@ -19,8 +22,6 @@ class Wallet extends Model
         'balance',
         'status'
     ];
-
-    protected $with = ['transactions','withdrawal'];
 
     public function user()
     {
@@ -34,6 +35,6 @@ class Wallet extends Model
 
     public function withdrawal()
     {
-        return $this->hasOne(Transaction::class)->where('status', 3);
+        return $this->hasOne(Transaction::class)->where('status', Transaction::STATUS_PENDING);
     }
 }

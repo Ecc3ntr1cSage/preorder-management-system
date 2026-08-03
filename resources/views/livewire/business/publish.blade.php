@@ -10,7 +10,7 @@
             endDate: @entangle('endDate'),
             previews: [],
         }"
-        class="-m-2 min-h-screen bg-paper bg-radial-mesh p-4 sm:-m-6 sm:p-6 lg:-m-6 lg:p-10"
+        class="-m-2 min-h-screen bg-paper p-4 sm:-m-6 sm:p-6 lg:-m-6 lg:p-10"
     >
         <div class="mx-auto mb-10 flex max-w-7xl flex-col gap-4 border-b border-ink/10 pb-8 sm:flex-row sm:items-end sm:justify-between">
             <div>

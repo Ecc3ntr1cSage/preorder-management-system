@@ -3,7 +3,6 @@
 use App\Livewire\Admin\AdminAnalytics;
 use App\Livewire\Admin\AdminCampaign;
 use App\Livewire\Admin\AdminCampaignInfo;
-use App\Livewire\Admin\AdminOverview;
 use App\Livewire\Admin\AdminSales;
 use App\Livewire\Admin\AdminUsers;
 use App\Livewire\Admin\AdminWallet;
@@ -39,8 +38,8 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 });
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function (): void {
-    Route::get('overview', AdminOverview::class)->name('admin.overview');
-    Route::get('analytics', AdminAnalytics::class)->name('admin.analytic');
+    Route::get('overview', AdminAnalytics::class)->name('admin.overview');
+    Route::redirect('analytics', '/admin/overview')->name('admin.analytic');
     Route::get('users', AdminUsers::class)->name('admin.users');
     Route::get('campaigns', AdminCampaign::class)->name('admin.campaign');
     Route::get('campaigns/{campaign}', AdminCampaignInfo::class)->name('admin.campaign.info');

@@ -1,156 +1,20 @@
-@inject('carbon', 'Carbon\Carbon')
-<x-slot name="header">
-    <a href="{{ route('admin.campaign') }}" wire:navigate
-        class="p-1 transition-all rounded-md hover:bg-zinc-600/60 hover:-translate-x-1">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-            class="w-6 h-6">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-        </svg>
-    </a>
-    {{ $campaign->title }}
-</x-slot>
-<div>
-    <x-admin-panel>
-        <x-slot name="title">
-            {{ __('Campaign Details') }}
-        </x-slot>
-        <div class="grid grid-cols-5 gap-4">
-            @foreach ($campaign->images as $image)
-                <img src="{{ asset('storage/campaign/' . $image->image) }}" class="w-full mb-2 rounded-md max-h-96" />
-            @endforeach
-        </div>
-        <hr class="my-3 border border-black/20" />
-        <div class="grid grid-cols-2 gap-2 text-gray-200">
-            <div>
-                <p>Title</p>
-                <p class="px-2 py-1 my-1 rounded-md bg-black/40">{{ $campaign->title }}</p>
-                <p>Description</p>
-                <p class="px-2 py-1 my-1 rounded-md bg-black/40">{{ $campaign->description }}</p>
-                <p>Details</p>
-                <p class="px-2 py-1 my-1 rounded-md bg-black/40">{{ $campaign->details }}</p>
-            </div>
-            <div>
-                <div class="grid grid-cols-3 gap-1">
-                    <div>
-                        <p>Price</p>
-                        <p class="px-2 py-1 my-1 rounded-md bg-black/40">{{ $campaign->currency }}
-                            {{ number_format($campaign->price / 100, 2) }}</p>
-                    </div>
-                    <div>
-                        <p>Start Date</p>
-                        <p class="px-2 py-1 my-1 rounded-md bg-black/40">
-                            {{ $carbon::parse($campaign->start_date)->format('d F y') }}</p>
-                    </div>
-                    <div>
-                        <p>End Date</p>
-                        <p class="px-2 py-1 my-1 rounded-md bg-black/40">
-                            {{ $carbon::parse($campaign->end_date)->format('d F y') }}</p>
-                    </div>
-                </div>
-                <div>
-                    <p>Shipping</p>
-                    <div class="flex items-center gap-2">
-                        @foreach (($campaign->shipping ?? []) as $key => $shipping)
-                            <p class="px-2 py-1 my-1 capitalize rounded-md bg-black/40">{{ $key }}:
-                                {{ $shipping }}</p>
-                        @endforeach
-                    </div>
-                    <p>Variations</p>
-                    @foreach (($campaign->variations ?? []) as $key => $variation)
-                        <p class="px-2 py-1 my-1 capitalize rounded-md bg-black/40">{{ $variation['name'] }}:
-                            {{ $variation['values'] }}</p>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-    </x-admin-panel>
-    <div class="grid grid-cols-2">
-        <x-admin-panel>
-            <x-slot name="title">
-                {{ __('Questions') }}
-            </x-slot>
-            @if ($campaign->questions->count() == 0)
-                <p class="text-center text-gray-200">No questions have been received for this campaign at the moment.
-                </p>
-            @else
-                @foreach ($campaign->questions as $question)
-                    <article class="px-6 py-4 mt-4 border-2 rounded-lg border-white/30" x-data="{ id: '' }">
-                        <div class="flex items-center justify-between">
-                            <p class="text-sm text-indigo-400"> <span class="text-xs text-gray-300">Posted
-                                    on</span>
-                                {{ $carbon::parse($question->created_at)->setTimeZone('Asia/Manila')->format('F d, g:i A') }}
-                            </p>
-                            <button type="button" wire:click="$toggle('deleteQuestionModal')"
-                                class="p-1 transition rounded-md cursor-pointer hover:bg-rose-500/80">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-white">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                            <x-confirmation-modal wire:model="deleteQuestionModal" maxWidth="lg">
-                                <x-slot name="title">
-                                    Delete Question
-                                </x-slot>
-                                <x-slot name="content">
-                                    Are you sure you want to delete this question?
-                                </x-slot>
-                                <x-slot name="footer">
-                                    <x-secondary-button wire:click="$toggle('deleteCampaignModal')"
-                                        wire:loading.attr="disabled">
-                                        Nevermind
-                                    </x-secondary-button>
-                                    <x-danger-button class="ml-2" wire:click="deleteQuestion({{ $question->id }})"
-                                        wire:loading.attr="disabled">
-                                        Delete
-                                    </x-danger-button>
-                                </x-slot>
-                            </x-confirmation-modal>
-                        </div>
-                        <p class="mt-2 text-gray-100">{{ $question->question }}</p>
-                        @if (!$question->reply)
-                        @else
-                            <div class="px-6 py-4 mt-2 rounded-lg bg-black/40">
-                                <p class="text-sm text-indigo-400">
-                                    <span class="text-xs text-gray-300">Replied on</span>
-                                    {{ $carbon::parse($question->reply->created_at)->setTimeZone('Asia/Manila')->format('F d, g:i A') }}
-                                </p>
-                                <p class="mt-2 text-gray-100">{{ $question->reply->reply }}</p>
-                            </div>
-                        @endif
-                    </article>
-                @endforeach
-            @endif
-        </x-admin-panel>
-        <x-admin-panel>
-            <x-slot name="title">
-                {{ __('Coupons') }}
-            </x-slot>
-            @if (!$campaign->coupon)
-                <p class="text-center text-gray-200">No coupon code generated yet.</p>
-            @else
-                <div class="flex flex-col p-4 text-gray-200 rounded-md bg-black/40">
-                    <x-label value="{{ __('Coupon Code') }}" />
-                    <div class="border-2 border-indigo-500 rounded-md w-fit">
-                        <p
-                            class="px-4 py-2 text-xl font-bold tracking-wider text-transparent uppercase bg-clip-text bg-gradient-to-r from-purple-400 to-cyan-400 w-fit">
-                            {{ $campaign->coupon->code }}</p>
-                    </div>
-                    <div class="px-2 my-3">
-                        <p class="font-medium text-indigo-400 ">
-                            {{ $campaign->currency }}{{ $campaign->coupon->discount }} OFF</p>
-                        <p>Limit for <span class="font-medium text-indigo-400">{{ $campaign->coupon->limit }}
-                                People</span></p>
-                        <p>Total usage <span class="font-medium text-indigo-400">{{ $campaign->coupon->usage }}
-                                People </span></p>
-                        <p>Valid until <span
-                                class="font-medium text-indigo-400">{{ $carbon::parse($campaign->coupon->end_date)->format('d F, Y') }}</span>
-                        </p>
-                    </div>
-                    <x-danger-button class="w-24"
-                        wire:click="deleteCoupon({{ $campaign->coupon->id }})">Delete</x-danger-button>
-                </div>
-            @endif
-        </x-admin-panel>
+<div class="min-h-[100dvh] bg-paper">
+    <div class="mx-auto max-w-7xl space-y-8 px-4 py-10 sm:px-6 lg:px-10">
+        <a href="{{ route('admin.campaign') }}" wire:navigate class="inline-flex items-center gap-2 text-sm font-semibold text-moss hover:text-accent">← Back to campaigns</a>
+
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"><div><p class="text-xs font-bold uppercase tracking-[0.28em] text-moss">Campaign review</p><h1 class="mt-3 font-display text-4xl font-bold tracking-[-0.04em]">{{ $campaign->title }}</h1><p class="mt-2 text-sm text-ink/55">{{ $campaign->user->name }} · Campaign #{{ $campaign->id }}</p></div><a href="{{ route('customer.show', $campaign) }}" target="_blank" class="rounded-full bg-ink px-4 py-2 text-sm font-semibold text-paper hover:bg-moss">View public page ↗</a></div>
+
+        <section class="grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
+            <div class="rounded-[2rem] bg-white p-6 shadow-[0_20px_60px_rgba(71,52,38,.07)] ring-1 ring-ink/5 sm:p-8"><p class="text-[10px] font-bold uppercase tracking-[0.22em] text-moss">Story</p><h2 class="mt-2 font-display text-2xl font-bold">{{ $campaign->description }}</h2><p class="mt-5 whitespace-pre-line text-sm leading-7 text-ink/60">{{ $campaign->details }}</p><div class="mt-7 grid gap-3 sm:grid-cols-2">@foreach ($campaign->images as $image)<img src="{{ asset('storage/campaign/' . $image->image) }}" alt="{{ $campaign->title }} image {{ $loop->iteration }}" class="aspect-[4/3] w-full rounded-2xl object-cover ring-1 ring-ink/10">@endforeach</div></div>
+            <div class="rounded-[2rem] bg-ink p-6 text-paper shadow-[12px_14px_0_rgba(105,115,91,.22)] sm:p-8"><p class="text-[10px] uppercase tracking-[0.22em] text-paper/45">Campaign facts</p><dl class="mt-6 space-y-5 text-sm"><div class="flex justify-between gap-4 border-b border-paper/15 pb-4"><dt class="text-paper/50">Status</dt><dd class="font-semibold">{{ $campaign->status === 1 ? 'Live' : 'Ended' }}</dd></div><div class="flex justify-between gap-4 border-b border-paper/15 pb-4"><dt class="text-paper/50">Price</dt><dd class="font-mono font-bold tabular-nums">{{ $campaign->currency }} {{ number_format($campaign->price / 100, 2) }}</dd></div><div class="flex justify-between gap-4 border-b border-paper/15 pb-4"><dt class="text-paper/50">Dates</dt><dd class="text-right">{{ $campaign->start_date->format('d M Y') }} → {{ $campaign->end_date->format('d M Y') }}</dd></div><div class="flex justify-between gap-4 border-b border-paper/15 pb-4"><dt class="text-paper/50">Orders</dt><dd class="font-mono font-bold tabular-nums">{{ $campaign->orders()->count() }}</dd></div><div><dt class="text-paper/50">Shipping</dt><dd class="mt-2 space-y-1">@forelse (($campaign->shipping ?? []) as $key => $value)<p class="flex justify-between gap-3"><span class="capitalize text-paper/70">{{ str_replace('_', ' ', $key) }}</span><span class="font-mono">RM {{ number_format($value, 2) }}</span></p>@empty<p class="text-paper/45">No shipping options listed.</p>@endforelse</dd></div></dl></div>
+        </section>
+
+        <section class="grid gap-6 lg:grid-cols-2">
+            <div class="rounded-[2rem] bg-white p-6 shadow-[0_20px_60px_rgba(71,52,38,.07)] ring-1 ring-ink/5 sm:p-8"><div class="flex items-end justify-between gap-4"><div><p class="text-[10px] font-bold uppercase tracking-[0.22em] text-moss">Community voice</p><h2 class="mt-2 font-display text-2xl font-bold">Questions</h2></div><span class="font-mono text-sm text-ink/45">{{ $campaign->questions->count() }}</span></div><div class="mt-6 divide-y divide-ink/10">@forelse ($campaign->questions as $question)<article class="py-5 first:pt-0" wire:key="question-{{ $question->id }}"><div class="flex items-start justify-between gap-4"><p class="text-sm leading-6 text-ink/70">{{ $question->question }}</p><button type="button" wire:click="confirmDeleteQuestion({{ $question->id }})" class="shrink-0 text-xs font-semibold text-accent-dark hover:text-accent">Delete</button></div>@if ($question->reply)<p class="mt-3 border-l-2 border-moss/30 pl-3 text-xs leading-5 text-ink/50">{{ $question->reply->reply }}</p>@else<p class="mt-3 text-xs text-ink/35">No reply yet.</p>@endif</article>@empty<p class="py-6 text-sm text-ink/50">No questions have been received.</p>@endforelse</div></div>
+            <div class="rounded-[2rem] bg-white p-6 shadow-[0_20px_60px_rgba(71,52,38,.07)] ring-1 ring-ink/5 sm:p-8"><p class="text-[10px] font-bold uppercase tracking-[0.22em] text-moss">Offer details</p><h2 class="mt-2 font-display text-2xl font-bold">Variations and coupon</h2><div class="mt-6 space-y-5 text-sm"> <div><p class="font-semibold">Variations</p><div class="mt-2 space-y-2">@forelse (($campaign->variations ?? []) as $variation)<p class="rounded-xl bg-paper px-4 py-3"><span class="font-semibold">{{ $variation['name'] ?? 'Option' }}</span><span class="text-ink/55"> · {{ $variation['values'] ?? '—' }}</span></p>@empty<p class="text-ink/50">No variations listed.</p>@endforelse</div></div><div class="border-t border-ink/10 pt-5"><p class="font-semibold">Coupon</p>@if ($campaign->coupon)<p class="mt-2 rounded-xl bg-paper px-4 py-3"><span class="font-mono font-bold">{{ $campaign->coupon->code }}</span><span class="text-ink/55"> · {{ $campaign->coupon->discount }}% off · {{ $campaign->coupon->usage }}/{{ $campaign->coupon->limit }} used</span></p>@else<p class="mt-2 text-ink/50">No coupon configured.</p>@endif</div></div></div>
+        </section>
     </div>
+
+    <x-confirmation-modal wire:model="deleteQuestionModal" maxWidth="md"><x-slot name="title">Delete question</x-slot><x-slot name="content">Remove “{{ $selectedQuestionText }}” from this campaign? This cannot be undone.</x-slot><x-slot name="footer"><x-secondary-button wire:click="$set('deleteQuestionModal', false)">Cancel</x-secondary-button><x-danger-button class="ml-2" wire:click="deleteQuestion">Delete question</x-danger-button></x-slot></x-confirmation-modal>
     <x-flash />
 </div>

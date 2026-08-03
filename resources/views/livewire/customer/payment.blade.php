@@ -1,124 +1,45 @@
-<div class="relative w-full mx-auto">
-    <div class="grid min-h-screen grid-cols-10">
-        <div class="px-4 py-6 col-span-full sm:py-12 lg:col-span-6">
-            <div class="w-full max-w-lg mx-auto">
-                <a href="{{ route('customer.show', $campaign->slug) }}" wire:navigate class="inline-block">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor"
-                        class="w-8 h-8 p-1 mb-4 transition-all rounded-full hover:bg-indigo-500/40 hover:-translate-x-1">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-                    </svg>
-                </a>
-                <h1 class="relative text-2xl font-medium text-gray-700 sm:text-3xl">Secure Checkout<span
-                        class="block w-10 h-1 mt-2 bg-indigo-500 sm:w-20"></span></h1>
-                <form wire:submit.prevent="payment" class="flex flex-col mt-6">
+@php
+    $cover = $campaign->images->first();
+    $hasShipping = !empty(array_filter($this->shippingArray));
+    $quantity = $preorder['quantity'];
+    $variation = $preorder['variations'] ?: 'Standard selection';
+@endphp
+
+<section class="relative isolate min-h-[100dvh] overflow-hidden bg-paper">
+    <div class="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[35rem] bg-[radial-gradient(circle_at_5%_4%,rgba(105,115,91,.15),transparent_34%),radial-gradient(circle_at_95%_5%,rgba(232,111,81,.12),transparent_32%)]"></div>
+
+    <div class="mx-auto max-w-7xl px-4 pb-20 pt-8 sm:px-6 sm:pt-14 lg:px-10 lg:pb-28">
+        <div class="flex items-center justify-between gap-5" data-animate="fade-up">
+            <a href="{{ route('customer.show', $campaign->slug) }}" wire:navigate class="group inline-flex items-center gap-3 text-sm font-semibold text-ink/60 transition-transform duration-700 ease-[cubic-bezier(.32,.72,0,1)] hover:-translate-x-1 hover:text-ink"><span class="flex size-8 items-center justify-center rounded-full bg-ink/5 ring-1 ring-ink/10 transition-colors duration-700 ease-[cubic-bezier(.32,.72,0,1)] group-hover:bg-accent group-hover:text-white"><svg viewBox="0 0 24 24" fill="none" class="size-4" aria-hidden="true"><path d="M19 12H5m6-7-7 7 7 7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" /></svg></span>Back to campaign</a>
+            <span class="inline-flex items-center gap-2 rounded-full bg-moss/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-moss"><span class="size-1.5 rounded-full bg-moss"></span>Secure checkout</span>
+        </div>
+
+        <div class="mt-12 grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(21rem,.95fr)] lg:items-start lg:gap-12">
+            <div data-animate="fade-up" data-delay="100">
+                <div class="max-w-2xl"><p class="text-[10px] font-semibold uppercase tracking-[0.22em] text-accent">One last step</p><h1 class="mt-4 font-display text-5xl font-semibold leading-[.92] tracking-[-0.07em] text-ink sm:text-7xl">Make it official.</h1><p class="mt-5 max-w-xl text-base leading-7 text-ink/60">Add your delivery details and we’ll turn this backing into a real order for the next run.</p></div>
+
+                <form wire:submit.prevent="payment" class="mt-10 space-y-5">
                     @csrf
-                    <x-label value="{{ __('Email') }}" />
-                    <x-input type="text" wire:model="email" />
-                    <x-input-error for="email" />
-                    <x-label value="{{ __('Name') }}" />
-                    <x-input type="text" wire:model="name" />
-                    <x-input-error for="name" />
-                    <x-label value="{{ __('Contact Number') }}" />
-                    <x-input type="text" wire:model="phone" />
-                    <x-input-error for="phone" />
-                    <x-label value="{{ __('Address') }}" />
-                    <x-input type="text" wire:model="address" />
-                    <x-input-error for="address" />
-                    <div class="flex gap-2">
-                        <div>
-                            <x-label value="{{ __('Postal Code') }}" />
-                            <x-input type="text" wire:model.live.debounce.250ms="postcode" class="w-24 md:w-full" />
-                            <x-input-error for="postcode" />
-                        </div>
-                        <div class="grow">
-                            <x-label value="{{ __('State') }}" />
-                            <select wire:model="state"
-                                class="w-full transition border-2 border-gray-400 rounded-md bg-white/20 focus:border-violet-500 focus:ring-2 focus:ring-offset-1 focus:ring-indigo-500">
-                                <option value="">Choose a state</option>
-                                @foreach (config('countries.malaysia.states') as $state)
-                                    <option value="{{ $state }}">{{ $state }}</option>
-                                @endforeach
-                            </select>
-                            <x-input-error for="state" />
-                        </div>
-                    </div>
-                    <div class="mt-8 rounded-xl border border-ink/10 bg-ink/5 p-4">
-                        <p class="text-sm font-semibold text-ink">Demo payment</p>
-                        <p class="mt-1 text-sm text-ink/60">Checkout is simulated locally. No bank details or external gateway are used.</p>
-                    </div>
-                    <p class="mt-10 text-sm font-semibold text-center text-gray-500">By placing this order you agree to
-                        the
-                        <a href="#" class="text-teal-400 underline whitespace-nowrap hover:text-teal-600">Terms
-                            and
-                            Conditions</a>
-                    </p>
-                    <x-button type="submit" target="payment" class="w-full mt-4">Place Order</x-button>
+                    <div class="rounded-[2rem] bg-ink/5 p-1.5 ring-1 ring-ink/10"><div class="rounded-[calc(2rem-0.375rem)] bg-white/75 p-6 shadow-[0_24px_70px_rgba(71,52,38,.08)] sm:p-8"><div class="flex items-end justify-between gap-5"><div><p class="text-[10px] font-semibold uppercase tracking-[0.22em] text-moss">01 · Your details</p><h2 class="mt-2 font-display text-2xl font-semibold tracking-[-0.04em]">Where should we send it?</h2></div><span class="font-mono text-[10px] text-ink/35">REQUIRED</span></div><div class="mt-8 grid gap-5 sm:grid-cols-2"><label class="block sm:col-span-2"><span class="text-[10px] font-semibold uppercase tracking-[0.17em] text-ink/45">Email address</span><input type="email" wire:model="email" autocomplete="email" placeholder="you@example.com" class="mt-2 block w-full rounded-[1.15rem] bg-paper/70 px-4 py-3.5 text-sm text-ink ring-1 ring-ink/10 outline-none transition-shadow duration-700 ease-[cubic-bezier(.32,.72,0,1)] placeholder:text-ink/30 focus:ring-2 focus:ring-accent/40" /> <x-input-error for="email" class="mt-2 text-rose-500" /></label><label class="block"><span class="text-[10px] font-semibold uppercase tracking-[0.17em] text-ink/45">Full name</span><input type="text" wire:model="name" autocomplete="name" placeholder="Your name" class="mt-2 block w-full rounded-[1.15rem] bg-paper/70 px-4 py-3.5 text-sm text-ink ring-1 ring-ink/10 outline-none transition-shadow duration-700 ease-[cubic-bezier(.32,.72,0,1)] placeholder:text-ink/30 focus:ring-2 focus:ring-accent/40" /> <x-input-error for="name" class="mt-2 text-rose-500" /></label><label class="block"><span class="text-[10px] font-semibold uppercase tracking-[0.17em] text-ink/45">Contact number</span><input type="tel" wire:model="phone" autocomplete="tel" placeholder="01 2345 6789" class="mt-2 block w-full rounded-[1.15rem] bg-paper/70 px-4 py-3.5 text-sm text-ink ring-1 ring-ink/10 outline-none transition-shadow duration-700 ease-[cubic-bezier(.32,.72,0,1)] placeholder:text-ink/30 focus:ring-2 focus:ring-accent/40" /> <x-input-error for="phone" class="mt-2 text-rose-500" /></label><label class="block sm:col-span-2"><span class="text-[10px] font-semibold uppercase tracking-[0.17em] text-ink/45">Address</span><input type="text" wire:model="address" autocomplete="street-address" placeholder="Street address" class="mt-2 block w-full rounded-[1.15rem] bg-paper/70 px-4 py-3.5 text-sm text-ink ring-1 ring-ink/10 outline-none transition-shadow duration-700 ease-[cubic-bezier(.32,.72,0,1)] placeholder:text-ink/30 focus:ring-2 focus:ring-accent/40" /> <x-input-error for="address" class="mt-2 text-rose-500" /></label><label class="block"><span class="text-[10px] font-semibold uppercase tracking-[0.17em] text-ink/45">Postcode</span><input type="text" wire:model.live.debounce.250ms="postcode" autocomplete="postal-code" inputmode="numeric" placeholder="50450" class="mt-2 block w-full rounded-[1.15rem] bg-paper/70 px-4 py-3.5 text-sm text-ink ring-1 ring-ink/10 outline-none transition-shadow duration-700 ease-[cubic-bezier(.32,.72,0,1)] placeholder:text-ink/30 focus:ring-2 focus:ring-accent/40" /> <x-input-error for="postcode" class="mt-2 text-rose-500" /></label><label class="block"><span class="text-[10px] font-semibold uppercase tracking-[0.17em] text-ink/45">State</span><select wire:model="state" autocomplete="address-level1" class="mt-2 block w-full rounded-[1.15rem] bg-paper/70 px-4 py-3.5 text-sm text-ink ring-1 ring-ink/10 outline-none transition-shadow duration-700 ease-[cubic-bezier(.32,.72,0,1)] focus:ring-2 focus:ring-accent/40"><option value="">Choose a state</option>@foreach (config('countries.malaysia.states') as $state)<option value="{{ $state }}">{{ $state }}</option>@endforeach</select> <x-input-error for="state" class="mt-2 text-rose-500" /></label></div><div class="mt-7 flex items-center gap-3 rounded-[1.15rem] bg-moss/10 px-4 py-3 text-xs leading-5 text-ink/55"><span class="flex size-7 shrink-0 items-center justify-center rounded-full bg-moss/15 text-moss"><svg viewBox="0 0 24 24" fill="none" class="size-3.5" aria-hidden="true"><path d="M12 6v6l3.5 2" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" /><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.35" /></svg></span>{{ $hasShipping ? 'Shipping is calculated from your state and shown in the order summary.' : 'This campaign includes free shipping.' }}</div></div></div>
+
+                    <div class="rounded-[2rem] bg-ink/5 p-1.5 ring-1 ring-ink/10"><div class="rounded-[calc(2rem-0.375rem)] bg-[#171412] p-6 text-paper shadow-[0_24px_70px_rgba(46,26,71,.12)] sm:p-8"><div class="flex items-center justify-between gap-4"><div><p class="text-[10px] font-semibold uppercase tracking-[0.22em] text-paper/45">02 · Payment</p><h2 class="mt-2 font-display text-2xl font-semibold tracking-[-0.04em]">Ready when you are.</h2></div><span class="flex size-9 items-center justify-center rounded-full bg-gold/15 text-gold"><svg viewBox="0 0 24 24" fill="none" class="size-4" aria-hidden="true"><path d="M7 10V8a5 5 0 0 1 10 0v2m-9 0h8a2 2 0 0 1 2 2v6H6v-6a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" /></svg></span></div><p class="mt-5 max-w-lg text-sm leading-6 text-paper/60">This is a local demo checkout. No card, bank details, or external payment gateway is used.</p><div class="mt-6 flex items-center gap-3 text-xs font-semibold text-paper/45"><span class="size-1.5 rounded-full bg-gold"></span>Order confirmation appears immediately after placing.</div></div></div>
+
+                    <div class="pt-3"><button type="submit" class="group inline-flex w-full items-center justify-between gap-4 rounded-full bg-ink px-5 py-3.5 text-sm font-semibold text-paper shadow-[0_18px_45px_rgba(5,5,5,.14)] transition-all duration-700 ease-[cubic-bezier(.32,.72,0,1)] hover:-translate-y-0.5 hover:bg-accent active:scale-[.98]" wire:loading.attr="disabled" wire:target="payment"><span wire:loading.remove wire:target="payment">Place order</span><span wire:loading wire:target="payment">Creating your order…</span><span class="flex size-8 items-center justify-center rounded-full bg-paper/10 transition-transform duration-700 ease-[cubic-bezier(.32,.72,0,1)] group-hover:translate-x-1"><svg viewBox="0 0 24 24" fill="none" class="size-4" aria-hidden="true"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" /></svg></span></button></div>
                 </form>
             </div>
-        </div>
-        <div class="relative flex flex-col py-6 pl-8 pr-4 col-span-full sm:py-12 lg:col-span-4 lg:py-24">
-            <div>
-                <img src="asset/checkout.webp" alt="" class="absolute inset-0 object-cover w-full h-full" />
-                <div
-                    class="absolute inset-0 w-full h-full bg-gradient-to-tr from-purple-800/90 via-indigo-900/90 to-emerald-900/90">
-                </div>
-            </div>
-            <div class="relative text-white">
-                <div class="flex justify-between mx-1">
-                    <div>
-                        <p class="text-base font-semibold capitalize">{{ $campaign->title }}</p>
-                        <p class="text-sm font-medium uppercase text-opacity-80">
-                            {{ $preorder['variations'] }}</p>
+
+            <aside class="lg:pt-4" data-animate="fade-up" data-delay="180">
+                <div class="rounded-[2rem] bg-ink/5 p-1.5 ring-1 ring-ink/10"><div class="overflow-hidden rounded-[calc(2rem-0.375rem)] bg-[#171412] text-paper shadow-[0_30px_90px_rgba(46,26,71,.18)]">
+                    <div class="relative aspect-[16/10] overflow-hidden bg-moss/10"><img src="{{ $cover ? asset('storage/campaign/' . $cover->image) : asset('asset/checkout2.webp') }}" alt="{{ $campaign->title }}" class="h-full w-full object-cover opacity-85" /><div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div><span class="absolute bottom-4 left-5 rounded-full bg-paper/90 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-ink">Your backing</span></div>
+                    <div class="p-6 sm:p-8"><div class="flex items-start justify-between gap-5"><div class="min-w-0"><p class="text-[10px] uppercase tracking-[0.22em] text-paper/45">Order summary</p><h2 class="mt-3 truncate font-display text-2xl font-semibold tracking-[-0.04em]">{{ $campaign->title }}</h2><p class="mt-2 text-sm text-paper/55">{{ $variation }} · {{ $quantity }} {{ $quantity === 1 ? 'unit' : 'units' }}</p></div><p class="shrink-0 font-display text-xl font-semibold text-gold">{{ $campaign->currency }}{{ number_format($campaign->price / 100, 2) }}</p></div>
+                        <div class="my-7 h-px bg-paper/10"></div><dl class="space-y-4 text-sm"><div class="flex justify-between gap-4"><dt class="text-paper/50">Subtotal</dt><dd>RM {{ number_format($calculations['subtotal'] / 100, 2) }}</dd></div><div class="flex justify-between gap-4"><dt class="text-paper/50">Shipping</dt><dd>@if (!$hasShipping) Free shipping @else RM {{ number_format((float) $shipping, 2) }} @endif</dd></div>@if ($discount)<div class="flex justify-between gap-4 text-gold"><dt>Discount</dt><dd>- RM {{ number_format($calculations['discount'] / 100, 2) }}</dd></div>@endif</dl>
+                        @if (isset($campaign->coupon))<div class="mt-7" x-data="{ showCoupon: false }"><button type="button" x-on:click="showCoupon = !showCoupon" class="group inline-flex items-center gap-2 text-xs font-semibold text-gold transition-colors duration-700 ease-[cubic-bezier(.32,.72,0,1)] hover:text-paper"><span class="flex size-6 items-center justify-center rounded-full bg-gold/15 transition-transform duration-700 ease-[cubic-bezier(.32,.72,0,1)] group-hover:rotate-90"><svg viewBox="0 0 24 24" fill="none" class="size-3.5" aria-hidden="true"><path d="M12 5v14m-7-7h14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" /></svg></span>{{ $discount ? 'Coupon applied' : 'Have a coupon?' }}</button><div x-cloak x-show="showCoupon" x-transition:enter="transition duration-700 ease-[cubic-bezier(.32,.72,0,1)]" x-transition:enter-start="translate-y-2 opacity-0" x-transition:enter-end="translate-y-0 opacity-100" class="mt-4"><div class="flex gap-2"><input type="text" wire:model="couponCode" placeholder="CODE" class="min-w-0 flex-1 rounded-full bg-paper/[.06] px-4 py-2.5 text-xs uppercase tracking-[0.15em] text-paper ring-1 ring-paper/10 outline-none placeholder:text-paper/30 focus:ring-2 focus:ring-gold" /><button type="button" wire:click="applyCoupon" class="rounded-full bg-gold px-4 py-2.5 text-xs font-semibold text-ink transition-transform duration-700 ease-[cubic-bezier(.32,.72,0,1)] hover:-translate-y-0.5 active:scale-[.98]">Apply</button></div><x-input-error for="couponCode" class="mt-2 text-red-300" /></div></div>@endif
+                        <div class="my-7 h-px bg-paper/10"></div><div class="flex items-end justify-between gap-4"><p class="font-display text-xl font-semibold">Total price</p><p class="font-display text-3xl font-semibold text-gold" wire:loading.class="opacity-50" wire:target="postcode,state,applyCoupon">RM {{ number_format($calculations['total'] / 100, 2) }}</p></div><p class="mt-4 text-xs leading-5 text-paper/40">Your order is placed directly with the campaign maker.</p>
                     </div>
-                    <p class="font-semibold">RM {{ number_format($campaign->price / 100, 2) }}<span class="text-sm"> x
-                            {{ $preorder['quantity'] }}</span></p>
-                </div>
-                <div class="my-5 h-0.5 w-full bg-white bg-opacity-30"></div>
-                <div class="space-y-2" x-data="{ show: false }">
-                    <p class="flex justify-between text-lg font-bold">
-                        <span>Subtotal</span>
-                        <span>RM {{ number_format($calculations['subtotal'] / 100, 2) }}</span>
-                    </p>
-                    <p class="flex justify-between text-sm font-medium">
-                        <span>Shipping</span>
-                        <span>
-                            @if (empty(array_filter($this->shippingArray)))
-                                Free Shipping
-                            @else
-                                RM {{ number_format((float) $this->shipping, 2) }}
-                            @endif
-                        </span>
-                    </p>
-                    @if ($discount)
-                        <p class="flex justify-between text-sm font-medium">
-                            <span>Discount</span>
-                            <span>
-                            - RM {{ number_format($calculations['discount'] / 100, 2) }}
-                            </span>
-                        </p>
-                    @endif
-                    @if (isset($campaign->coupon))
-                        <button type="button" x-on:click="show = !show " class="text-xs text-green-400 underline">Have
-                            a coupon</button>
-                        <div x-cloak x-show="show" x-transition>
-                            <div class="flex items-center gap-2">
-                                <x-input type="text" placeholder="Coupon code" class="text-xs uppercase"
-                                    wire:model="couponCode" />
-                                <x-secondary-button class="text-xs" wire:click="applyCoupon">Apply</x-secondary-button>
-                            </div>
-                            <x-input-error for="couponCode" />
-                        </div>
-                    @endif
-                </div>
-                <div class="h-0.5 my-5 w-full bg-white bg-opacity-30"></div>
-                <p class="flex justify-between text-lg font-bold">
-                    <span>Total Price</span>
-                    <span wire:loading.class="opacity-50">RM
-                        {{ number_format($calculations['total'] / 100, 2) }}</span>
-                </p>
-            </div>
+                </div></div>
+                <div class="mt-4 flex items-center justify-center gap-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-ink/40"><span class="size-1.5 rounded-full bg-moss"></span>Protected by a local demo flow <span class="size-1.5 rounded-full bg-accent"></span></div>
+            </aside>
         </div>
     </div>
     <x-flash />
-</div>
+</section>

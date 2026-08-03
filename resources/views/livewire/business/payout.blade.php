@@ -92,7 +92,7 @@
                                     @endif
                                 </td>
                                 <td class="px-3 py-4 whitespace-nowrap">
-                                    {{ $carbon::parse($transaction->created_at)->setTimeZone('Asia/Manila')->format('d F y, g:i A') }}
+                                    {{ $carbon::parse($transaction->created_at)->setTimeZone('Asia/Kuala_Lumpur')->format('d F y, g:i A') }}
                                 </td>
                             </tr>
                         @endforeach

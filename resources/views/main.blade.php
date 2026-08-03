@@ -13,26 +13,26 @@
         <div class="pointer-events-none absolute -left-32 top-40 h-[32rem] w-[32rem] rounded-full bg-moss/10 blur-[100px]"></div>
         <div class="pointer-events-none absolute right-[-12rem] top-[-10rem] h-[38rem] w-[38rem] rounded-full bg-accent/10 blur-[120px]"></div>
 
-        <header class="relative z-40 px-4 pt-5 sm:px-6 lg:px-8">
-            <nav x-data="{ open: false }" class="relative mx-auto flex max-w-6xl items-center justify-between rounded-full bg-ink px-3 py-3 text-paper ring-1 ring-ink/10 sm:px-5">
+        <header class="relative z-40 border-b border-ink/10 bg-paper/90 backdrop-blur">
+            <nav x-data="{ open: false }" class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8" aria-label="Main navigation">
                 <a href="{{ route('home') }}" class="group flex items-center gap-2.5" aria-label="pre.shop home">
-                    <span class="flex h-9 w-9 items-center justify-center rounded-full bg-paper/10 ring-1 ring-paper/15 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:rotate-12">
+                    <span class="flex h-9 w-9 items-center justify-center transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:rotate-12">
                         <img src="{{ asset('asset/preorder.png') }}" alt="" class="h-6 w-6 object-contain" />
                     </span>
                     <span class="font-display text-lg font-semibold tracking-[-0.04em]">pre<span class="text-accent">.</span>shop</span>
                 </a>
 
-                <div class="hidden items-center gap-7 text-xs font-medium tracking-wide text-paper/60 md:flex">
-                    <a href="#how-it-works" class="transition-colors duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:text-paper">How it works</a>
-                    <a href="#campaigns" class="transition-colors duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:text-paper">Campaigns</a>
-                    <a href="#makers" class="transition-colors duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:text-paper">For makers</a>
+                <div class="hidden items-center gap-7 text-xs font-medium tracking-wide text-ink/60 md:flex">
+                    <a href="#how-it-works" class="transition-colors duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:text-ink">How it works</a>
+                    <a href="#campaigns" class="transition-colors duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:text-ink">Campaigns</a>
+                    <a href="#makers" class="transition-colors duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:text-ink">For makers</a>
                     @auth
-                        <a href="{{ route('dashboard') }}" class="group inline-flex items-center gap-2 rounded-full bg-accent px-4 py-2.5 font-semibold text-white transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-0.5 hover:bg-accent-dark active:scale-[0.98]">
+                        <a href="{{ route('dashboard') }}" class="group inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 font-semibold text-paper transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-0.5 hover:bg-accent active:scale-[0.98]">
                             Workspace
                             <span class="flex h-5 w-5 items-center justify-center rounded-full bg-white/15 text-[11px] transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:translate-x-0.5 group-hover:-translate-y-px">↗</span>
                         </a>
                     @else
-                        <button type="button" x-on:click="loginOpen = true" class="group inline-flex items-center gap-2 rounded-full bg-paper px-4 py-2.5 font-semibold text-ink transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-0.5 hover:bg-white active:scale-[0.98]">
+                        <button type="button" x-on:click="loginOpen = true" class="group inline-flex items-center gap-2 rounded-full border border-ink px-4 py-2.5 font-semibold text-ink transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-0.5 hover:bg-ink hover:text-paper active:scale-[0.98]">
                             Log in
                             <span class="flex h-5 w-5 items-center justify-center rounded-full bg-ink/10 text-[11px] transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:translate-x-0.5 group-hover:-translate-y-px">↗</span>
                         </button>
@@ -41,20 +41,20 @@
 
                 <div class="flex items-center gap-2 md:hidden">
                     @auth
-                        <a href="{{ route('dashboard') }}" class="rounded-full bg-accent px-3.5 py-2 text-[11px] font-semibold text-white">Workspace</a>
+                        <a href="{{ route('dashboard') }}" class="rounded-full bg-ink px-3.5 py-2 text-[11px] font-semibold text-paper">Workspace</a>
                     @else
-                        <button type="button" x-on:click="loginOpen = true" class="rounded-full bg-paper px-3.5 py-2 text-[11px] font-semibold text-ink">Log in</button>
+                        <button type="button" x-on:click="loginOpen = true" class="rounded-full border border-ink px-3.5 py-2 text-[11px] font-semibold text-ink">Log in</button>
                     @endauth
-                    <button type="button" x-on:click="open = !open" x-bind:aria-expanded="open" aria-label="Toggle menu" class="relative flex h-9 w-9 items-center justify-center rounded-full bg-paper/10 ring-1 ring-paper/15">
-                        <span class="absolute h-px w-4 bg-paper transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]" :class="open ? 'rotate-45' : '-translate-y-1.5'"></span>
-                        <span class="absolute h-px w-4 bg-paper transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]" :class="open ? '-rotate-45' : 'translate-y-1.5'"></span>
+                    <button type="button" x-on:click="open = !open" x-bind:aria-expanded="open" aria-label="Toggle menu" class="relative flex h-9 w-9 items-center justify-center rounded-full bg-ink/5 ring-1 ring-ink/10">
+                        <span class="absolute h-px w-4 bg-ink transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]" :class="open ? 'rotate-45' : '-translate-y-1.5'"></span>
+                        <span class="absolute h-px w-4 bg-ink transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]" :class="open ? '-rotate-45' : 'translate-y-1.5'"></span>
                     </button>
                 </div>
 
-                <div x-cloak x-show="open" x-transition:enter="transition duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]" x-transition:enter-start="translate-y-2 opacity-0" x-transition:enter-end="translate-y-0 opacity-100" x-transition:leave="transition duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]" x-transition:leave-start="translate-y-0 opacity-100" x-transition:leave-end="translate-y-2 opacity-0" class="absolute inset-x-0 top-full mt-3 rounded-[1.75rem] bg-ink p-3 ring-1 ring-paper/10 md:hidden">
-                    <a href="#how-it-works" x-on:click="open = false" class="block rounded-full px-4 py-3 text-sm text-paper/70 transition-colors duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-paper/10 hover:text-paper">How it works</a>
-                    <a href="#campaigns" x-on:click="open = false" class="block rounded-full px-4 py-3 text-sm text-paper/70 transition-colors duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-paper/10 hover:text-paper">Campaigns</a>
-                    <a href="#makers" x-on:click="open = false" class="block rounded-full px-4 py-3 text-sm text-paper/70 transition-colors duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-paper/10 hover:text-paper">For makers</a>
+                <div x-cloak x-show="open" x-transition:enter="transition duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]" x-transition:enter-start="translate-y-2 opacity-0" x-transition:enter-end="translate-y-0 opacity-100" x-transition:leave="transition duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]" x-transition:leave-start="translate-y-0 opacity-100" x-transition:leave-end="translate-y-2 opacity-0" class="absolute inset-x-0 top-full border-t border-ink/10 bg-paper p-3 md:hidden">
+                    <a href="#how-it-works" x-on:click="open = false" class="block rounded-full px-4 py-3 text-sm text-ink/70 transition-colors duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-ink/5 hover:text-ink">How it works</a>
+                    <a href="#campaigns" x-on:click="open = false" class="block rounded-full px-4 py-3 text-sm text-ink/70 transition-colors duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-ink/5 hover:text-ink">Campaigns</a>
+                    <a href="#makers" x-on:click="open = false" class="block rounded-full px-4 py-3 text-sm text-ink/70 transition-colors duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-ink/5 hover:text-ink">For makers</a>
                 </div>
             </nav>
         </header>
