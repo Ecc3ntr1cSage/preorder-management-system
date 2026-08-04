@@ -260,6 +260,17 @@ php artisan route:list --except-vendor
 
 There is no JavaScript unit-test or lint script in `package.json`; the frontend verification step is `npm run build` plus browser smoke testing.
 
+## Docker / Render
+
+The production image uses PHP 8.3 Apache and a Node 22 Vite build, matching the deployment pattern used by Hopexito:
+
+```bash
+docker build -t preorder-ms .
+docker run --env-file .env -p 10000:10000 preorder-ms
+```
+
+On Render, create a Web Service using the repository's `Dockerfile`. Set `APP_KEY`, the database `DB_*` variables, and any other production environment values in Render. The container listens on Render's `PORT`, runs `migrate:fresh --seed` on startup to restore the deterministic demo dataset, creates the storage link, and caches Laravel configuration, routes, and views.
+
 ## Testing
 
 `phpunit.xml` forces an in-memory SQLite database, array cache and session drivers, synchronous queues and an in-memory mailer. Tests never need the local database configured in `.env`.
