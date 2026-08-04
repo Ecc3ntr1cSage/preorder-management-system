@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        fake()->seed(20260803);
+        mt_srand(20260803);
 
         $users = $this->seedUsers();
         $campaigns = $this->seedCampaigns($users);
@@ -121,7 +121,7 @@ class DatabaseSeeder extends Seeder
             'status' => $status,
         ]);
 
-        $imageCount = fake()->randomElement([2, 3, 4]);
+        $imageCount = [2, 3, 4][mt_rand(0, 2)];
         for ($index = 1; $index <= $imageCount; $index++) {
             Image::create([
                 'campaign_id' => $campaign->id,
@@ -177,11 +177,11 @@ class DatabaseSeeder extends Seeder
 
             foreach ($buyerKeys as $buyerKey) {
                 $buyer = $users[$buyerKey];
-                $quantity = fake()->numberBetween(1, 2);
-                $shipping = fake()->randomElement([600, 800]);
+                $quantity = mt_rand(1, 2);
+                $shipping = [600, 800][mt_rand(0, 1)];
                 $subtotal = $campaign->price * $quantity;
                 $amount = $subtotal + $shipping;
-                $createdAt = CarbonImmutable::now()->subDays(fake()->numberBetween(2, 16));
+                $createdAt = CarbonImmutable::now()->subDays(mt_rand(2, 16));
 
                 $order = Order::create([
                     'collection_id' => 'demo',
